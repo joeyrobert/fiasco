@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual C# Express 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fiasco", "Fiasco\Fiasco.csproj", "{B9DD2997-D0CE-4F57-BC8D-4BB50E622DBD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fiasco.Protocols.XBoard", "Fiasco.Protocols.XBoard\Fiasco.Protocols.XBoard.csproj", "{3C606173-CEBD-4DEB-88F9-FD625CCA837B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fiasco.Tests", "Fiasco.Tests\Fiasco.Tests.csproj", "{79311F3B-C463-45E8-84CC-0A8E35A15654}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B9DD2997-D0CE-4F57-BC8D-4BB50E622DBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9DD2997-D0CE-4F57-BC8D-4BB50E622DBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9DD2997-D0CE-4F57-BC8D-4BB50E622DBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B9DD2997-D0CE-4F57-BC8D-4BB50E622DBD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C606173-CEBD-4DEB-88F9-FD625CCA837B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C606173-CEBD-4DEB-88F9-FD625CCA837B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C606173-CEBD-4DEB-88F9-FD625CCA837B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C606173-CEBD-4DEB-88F9-FD625CCA837B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79311F3B-C463-45E8-84CC-0A8E35A15654}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79311F3B-C463-45E8-84CC-0A8E35A15654}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79311F3B-C463-45E8-84CC-0A8E35A15654}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79311F3B-C463-45E8-84CC-0A8E35A15654}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
