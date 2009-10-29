@@ -71,8 +71,13 @@ namespace Fiasco
             Console.WriteLine("En passant target:    " + board.EnPassantTarget);
             Console.WriteLine("Full move number:     " + board.FullMoveNumber);
             Console.WriteLine("Half move clock:      " + board.HalfMoveClock);
-            Console.WriteLine("Turn to move:         " + board.Turn);
+            Console.WriteLine("Turn to move:         " + TurnText(board.Turn));
             Console.WriteLine("Current board value:  " + Eval.PieceValues(board));
+        }
+
+        static public string TurnText(int turn)
+        {            
+            return (turn == 1 ? "WHITE" : "BLACK");
         }
     }
 }

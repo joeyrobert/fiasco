@@ -28,7 +28,10 @@ namespace Fiasco
             Board board = new Board();
             board.SetFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 
-            Console.WriteLine(Fiasco.Engine.Perft.Minimax(board, 4));
+            Display.Board(board);
+            Console.WriteLine("---------------------------");
+            Fiasco.Engine.Perft.Divide(board, 5);
+            Display.Board(board);
 
             Console.Read();
         }

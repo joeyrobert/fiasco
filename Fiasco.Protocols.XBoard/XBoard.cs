@@ -23,6 +23,11 @@ using Fiasco.Engine;
 
 namespace Fiasco.Protocols
 {
+    class InvalidCommandException : Exception
+    {
+        public InvalidCommandException() { }
+    }
+
     public class XBoard
     {
         private Board _board = new Board();
@@ -37,41 +42,75 @@ namespace Fiasco.Protocols
         #region Interface Control
         public void CommandLine()
         {
-            string command = "";
+            string command;
             while (true)
             {
                 command = Console.ReadLine();
-                if (command == "quit") break;
-                LookUpCommand(command);
+                try
+                {
+                    ExecuteCommand(command);
+                }
+                catch
+                {
+                    Console.WriteLine("Invalid command");
+                }
             }
         }
 
-        private void LookUpCommand(string command)
+        private void ExecuteCommand(string command)
         {
-            if (command == "new")
+            switch (command)
             {
-                iNew();
+                case "new":
+                    iNew();
+                    return;
+                case "go":
+                    iGo();
+                    return;
+                case "white":
+                    iWhite();
+                    return;
+                case "black":
+                    iBlack();
+                    return;
+                case "quit":
+                    Environment.Exit(-1);
+                    return;
+                case "display":
+                    Display.Board(_board);
+                    return;
+                case "nobook":
+                    NoBook();
+                    return;
+                case "turn":
+                    Turn();
+                    return;
+                case "clear":
+                    Clear();
+                    return;
             }
-            else if (command == "go")
-            {
-                iGo();
-            }
-            else if (command == "white")
-            {
-                iWhite();
-            }
-            else if (command == "black")
-            {
-                iBlack();
-            }
-            else if (command == "display")
-            {
-                Display.Board(_board);
-            }
-            else if (Regex.Match(command, "[a-z][1-8][a-z][1-8][qkbr]?", RegexOptions.IgnoreCase).Success)
+
+            if (Regex.Match(command, "[a-z][1-8][a-z][1-8][qkbr]?", RegexOptions.IgnoreCase).Success)
             {
                 iMove(command);
+                return;
             }
+
+            int depth;
+
+            if (command.Split(' ')[0] == "perft" && int.TryParse(command.Split(' ')[1], out depth))
+            {
+                Perft(depth);
+                return;
+            }
+
+            if (command.Split(' ')[0] == "divide" && int.TryParse(command.Split(' ')[1], out depth))
+            {
+                Divide(depth);
+                return;
+            }
+
+            throw new InvalidCommandException(); 
         }
         #endregion
 
@@ -113,18 +152,17 @@ namespace Fiasco.Protocols
         private void oMove()
         {
             Move move = new Move();
-            int moveCount;
+
             // check the opening book
             if (!_board.Book.OutOfOpeningBook)
             {
                 List<Move> moves = _board.Book.GenerateOpeningBookMoves();
-                moveCount = moves.Count;
-                if (moveCount == 0)
+                int moveCount = moves.Count;
+
+                if (moveCount <= 0)
                     _board.Book.OutOfOpeningBook = true;
-                else if (moveCount <= 1)
-                    move = moves[0];
                 else
-                    move = moves[_randomNumber.Next(0, moveCount - 1)];
+                    move = moves[_randomNumber.Next(0, moveCount)];
 
                 if (moveCount != 0)
                     _board.AddMoveNoBits(move);
@@ -132,12 +170,39 @@ namespace Fiasco.Protocols
 
             if(_board.Book.OutOfOpeningBook) // if we're out of the opening book, use the search
             {
-                Search.AlphaBeta(_board, 4, -1 * Eval.KVALUE, Eval.KVALUE, ref move);
-                // the current move will always be at the top of the stack
+                Search.AlphaBeta(_board, 3, -Eval.KVALUE, Eval.KVALUE, ref move);
                 _board.AddMove(move);
             }
 
             Console.WriteLine("move " + Constants.MoveToString(move));
+            Display.Board(_board);
+        }
+        #endregion
+
+        #region Fiasco Commands
+        private void NoBook()
+        {
+            _board.Book.OutOfOpeningBook = true;
+        }
+
+        private void Clear()
+        {
+            Console.Clear();
+        }
+
+        private void Turn()
+        {
+            Console.WriteLine(Display.TurnText(_board.Turn));
+        }
+
+        private void Perft(int depth)
+        {
+            Console.WriteLine(Fiasco.Engine.Perft.Minimax(_board, depth));
+        }
+
+        private void Divide(int depth)
+        {
+            Fiasco.Engine.Perft.Divide(_board, depth);
         }
         #endregion
     }
