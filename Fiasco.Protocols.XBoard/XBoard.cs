@@ -88,6 +88,9 @@ namespace Fiasco.Protocols
                 case "clear":
                     Clear();
                     return;
+                case "exit":
+                    Environment.Exit(0);
+                    return;
             }
 
             if (Regex.Match(command, "[a-z][1-8][a-z][1-8][qkbr]?", RegexOptions.IgnoreCase).Success)
@@ -175,7 +178,6 @@ namespace Fiasco.Protocols
             }
 
             Console.WriteLine("move " + Constants.MoveToString(move));
-            Display.Board(_board);
         }
         #endregion
 
