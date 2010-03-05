@@ -16,35 +16,49 @@
  * along with Fiasco.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using System;
 using System.Collections.Generic;
 
 namespace Fiasco.Engine
 {
     public class Search
     {
-        public static int AlphaBeta(Board board, int depth, int alpha, int beta, ref Move bestMove)
+        public static Pair Minimax(Board board, int depth)
         {
+            Move tmpMove = new Move();
+
             if (depth == 0)
-                return Eval.PieceValues(board);
+                return new Pair(Eval.PieceValues(board), tmpMove);
 
             List<Move> moveList = board.GenerateMoves();
-            Move tmpMove = new Move();
+            Pair best = new Pair();
 
             foreach (Move move in moveList)
             {
                 board.AddMove(move);
-                int val = -AlphaBeta(board, depth - 1, -beta, -alpha, ref tmpMove);
+                Pair children = Minimax(board, depth - 1);
+                int value = -1 * children.Score;
                 board.SubtractMove();
 
-                if (val > alpha)
+                if(!best.Set || value > best.Score) {
+                    best.Move = move;
+                    best.Score = value;
+                }
+                // if two moves are equivalent, randomly choose one.
+                else if (value == best.Score)
                 {
-                    if (val >= beta)
-                        return beta;
-                    alpha = val;
-                    bestMove = move;
+                    Random random = new Random((int)(DateTime.Now.Ticks % 1000000));
+                    int choice = random.Next(2);
+
+                    if (choice == 1)
+                    {
+                        best.Move = move;
+                        best.Score = value;
+                    }
                 }
             }
-            return alpha;
+
+            return best;
         }
     }
 }

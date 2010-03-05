@@ -16,25 +16,19 @@
  * along with Fiasco.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using System;
-
 namespace Fiasco
 {
-    class Program
+    public struct Pair
     {
-        static void Main(string[] args)
+        public int Score;
+        public Move Move;
+        public bool Set;
+
+        public Pair(int score, Move move)
         {
-            Console.Title = "Fiasco Chess Engine";
-            Board board = new Board();
-            board.SetFen("rnbqkbnr/pppppppp/8/8/8/1q6/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
-
-            Display.Board(board);
-            Console.WriteLine("---------------------------");
-            Pair results = Fiasco.Engine.Search.Minimax(board, 2);
-            Console.WriteLine(Constants.MoveToString(results.Move) + " : " + results.Score);
-            Display.Board(board);
-
-            Console.Read();
+            Score = score;
+            Move = move;
+            Set = true;
         }
     }
 }
