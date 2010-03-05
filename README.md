@@ -1,9 +1,13 @@
 Fiasco Chess Engine 
 ===================
 
-http://github.com/joeyrobert/fiasco
+URLs
+----
 
-http://joeyrobert.org/
+[http://github.com/joeyrobert/fiasco](http://github.com/joeyrobert/fiasco "Github page") and [http://joeyrobert.org/](http://joeyrobert.org/ "joeyrobert.org")
+
+Description
+-----------
 
 Copyright &copy; 2009-2010 Joseph Robert and licensed under the GNU LGPL.
 
