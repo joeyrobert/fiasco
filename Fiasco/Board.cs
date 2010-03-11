@@ -37,7 +37,7 @@ namespace Fiasco
         private Book _book = new Book();
         #endregion
 
-        #region Constructors
+        #region Constructors and Destructor
         public Board()
         {
             Turn = Constants.WHITE;
@@ -53,14 +53,22 @@ namespace Fiasco
             SetFen(fenBoard);
         }
 
+		/// <summary>
+		/// Full copy constructor
+		/// </summary>
+		/// <param name="board">Board to be copied</param>
         public Board(Board board)
         {
-            this.Turn = board.Turn;
-            this.FullMoveNumber = board.FullMoveNumber;
-            this.HalfMoveClock = board.HalfMoveClock;
-            this.Castling = board.Castling;
             System.Array.Copy(board.PieceArray, this.PieceArray, 120);
             System.Array.Copy(board.ColourArray, this.ColourArray, 120);
+
+            this.Turn = board.Turn;
+            this.Castling = board.Castling;
+            this.EnPassantTarget = board.EnPassantTarget;
+            this.HalfMoveClock = board.HalfMoveClock;
+            this.FullMoveNumber = board.FullMoveNumber;
+            this.Book = board.Book;
+            this.History = board.History;
         }
         #endregion
 
@@ -157,6 +165,18 @@ namespace Fiasco
             set
             {
                 _book = value;
+            }
+        }
+
+        public Stack<Square> History
+        {
+            get
+            {
+                return _history;
+            }
+            set
+            {
+                _history = value;
             }
         }
         #endregion

@@ -35,14 +35,15 @@ namespace Fiasco.Engine
 
             foreach (Move move in moveList)
             {
-                board.AddMove(move);
-                Pair children = Minimax(board, depth - 1);
-                int value = -1 * children.Score;
-                board.SubtractMove();
+                Board newBoard = new Board(board);
 
+                newBoard.AddMove(move);
+                Pair children = Minimax(newBoard, depth - 1);
+                int value = -1 * children.Score;
                 if(!best.Set || value > best.Score) {
                     best.Move = move;
                     best.Score = value;
+                    best.Set = true;
                 }
                 // if two moves are equivalent, randomly choose one.
                 else if (value == best.Score)

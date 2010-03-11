@@ -30,9 +30,8 @@ namespace Fiasco
 
             Display.Board(board);
             Console.WriteLine("---------------------------");
-            Pair results = Fiasco.Engine.Search.Minimax(board, 2);
+            Pair results = Fiasco.Engine.Search.Minimax(board, 4);
             Console.WriteLine(Constants.MoveToString(results.Move) + " : " + results.Score);
-            Display.Board(board);
 
             Console.Read();
         }
