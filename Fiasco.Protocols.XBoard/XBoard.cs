@@ -173,7 +173,7 @@ namespace Fiasco.Protocols
 
             if(_board.Book.OutOfOpeningBook) // if we're out of the opening book, use the search
             {
-                Search.Minimax(_board, 3);
+                move = Search.Minimax(_board, 3).Move;
                 _board.AddMove(move);
             }
             Console.WriteLine("move " + Constants.MoveToString(move));
