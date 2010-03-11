@@ -35,7 +35,7 @@ namespace Fiasco.Protocols
 
         public XBoard()
         {
-            _board.Book.Load(@"..\..\..\BOOK");
+            _board.Book.Load(@"../../../BOOK");
             iNew();
         }
 
@@ -173,10 +173,9 @@ namespace Fiasco.Protocols
 
             if(_board.Book.OutOfOpeningBook) // if we're out of the opening book, use the search
             {
-                //Search.AlphaBeta(_board, 3, -Eval.KVALUE, Eval.KVALUE, ref move);
-                //_board.AddMove(move);
+                Search.Minimax(_board, 3);
+                _board.AddMove(move);
             }
-
             Console.WriteLine("move " + Constants.MoveToString(move));
         }
         #endregion
