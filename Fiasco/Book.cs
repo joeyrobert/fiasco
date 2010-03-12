@@ -77,7 +77,14 @@ namespace Fiasco
         /// <param name="file"></param>
         public void Load(string file)
         {
-            _lines = System.IO.File.ReadAllLines(file);
+            try
+            {
+                _lines = System.IO.File.ReadAllLines(file);
+            }
+            catch
+            {
+                this.OutOfOpeningBook = true;
+            }
         }
 
         public List<Move> GenerateOpeningBookMoves()

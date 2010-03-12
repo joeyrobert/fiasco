@@ -35,7 +35,7 @@ namespace Fiasco.Protocols
 
         public XBoard()
         {
-            _board.Book.Load(@"../../../BOOK");
+            _board.Book.Load(@"BOOK");
             iNew();
         }
 
