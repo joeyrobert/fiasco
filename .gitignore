@@ -8,4 +8,6 @@ _ReSharper.*
 *.resharper
 *.suo
 *.cache
+*.userprefs
+*.pidb
 ~$*
