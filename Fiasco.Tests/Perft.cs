@@ -35,6 +35,7 @@ namespace Fiasco.Tests
             board.SetFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
         }
 
+        #region Initial Board
         [Test()]
         public void Initial_Perft4()
         {
@@ -48,7 +49,9 @@ namespace Fiasco.Tests
             ulong perft = Engine.Perft.Minimax(board, 5);
             Assert.AreEqual(4865609, perft);
         }
+        #endregion
 
+        #region Position 2
         [Test()]
         public void Position2_Perft3()
         {
@@ -64,7 +67,9 @@ namespace Fiasco.Tests
             ulong perft = Engine.Perft.Minimax(board, 4);
             Assert.AreEqual(4085603, perft);
         }
+        #endregion
 
+        #region Position 3
         [Test()]
         public void Position3_Perft4()
         {
@@ -80,7 +85,9 @@ namespace Fiasco.Tests
             ulong perft = Engine.Perft.Minimax(board, 5);
             Assert.AreEqual(674624, perft);
         }
+        #endregion
 
+        #region Position 4
         [Test()]
         public void Position4_Perft1()
         {
@@ -96,7 +103,9 @@ namespace Fiasco.Tests
             ulong perft = Engine.Perft.Minimax(board, 2);
             Assert.AreEqual(279, perft);
         }
+        #endregion
 
+        #region Position 5
         [Test()]
         public void Position5_Perft5()
         {
@@ -104,5 +113,16 @@ namespace Fiasco.Tests
             ulong perft = Engine.Perft.Minimax(board, 5);
             Assert.AreEqual(11139762, perft);
         }
+        #endregion
+
+        #region Check cases
+        [Test()]
+        public void RemoveIfInCheck()
+        {
+            board.SetFen("rnb1kbnr/3p1Qpp/1q6/1B2N3/3PPB2/2P5/PP3PPP/R4RK1 b k - 0 16");
+            ulong perft = Engine.Perft.Minimax(board, 1);
+            Assert.AreEqual(1, perft);
+        }
+        #endregion
     }
 }

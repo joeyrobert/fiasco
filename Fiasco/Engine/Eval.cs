@@ -59,7 +59,7 @@ namespace Fiasco.Engine
                 }
             }
 
-            return score;
+            return board.Turn * score;
         }
     }
 }

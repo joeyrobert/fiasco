@@ -35,11 +35,13 @@ namespace Fiasco.Engine
 
             foreach (Move move in moveList)
             {
-                Board newBoard = new Board(board);
+                if (!board.AddMove(move)) continue;
 
-                newBoard.AddMove(move);
-                Pair children = Minimax(newBoard, depth - 1);
+                Pair children = Minimax(board, depth - 1);
                 int value = -1 * children.Score;
+
+                board.SubtractMove();
+
                 if(!best.Set || value > best.Score) {
                     best.Move = move;
                     best.Score = value;
