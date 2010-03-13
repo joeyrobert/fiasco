@@ -27,6 +27,7 @@ namespace Fiasco.Engine
         public const int NVALUE = 300;
         public const int PVALUE = 100;
 
+        #region Piece positioning
         private static int PieceValues(Board board)
         {
             int score = 0;
@@ -62,10 +63,72 @@ namespace Fiasco.Engine
             return score;
         }
 
+        private static int CenterValues(Board board)
+        {
+            int score = 0;
+            int colour;
+
+            for (int i = 4; i <= 7; i++)
+            {
+                for (int j = 3; j <= 6; j++)
+                {
+                    int position = i * 10 + j;
+                    colour = board.ColourArray[position];
+                    int value = 0;
+
+                    switch (board.PieceArray[position])
+                    {
+                        case Constants.K:
+                            value = colour * KVALUE;
+                            break;
+                        case Constants.Q:
+                            value = colour * QVALUE;
+                            break;
+                        case Constants.R:
+                            value = colour * RVALUE;
+                            break;
+                        case Constants.N:
+                            value = colour * NVALUE;
+                            break;
+                        case Constants.B:
+                            value = colour * BVALUE;
+                            break;
+                        case Constants.P:
+                            value = colour * PVALUE;
+                            break;
+                    }
+
+                    if (position == 64 || position == 65 || position == 54 || position == 55)
+                        score += (int)(0.20 * value);
+                    else
+                        score += (int)(0.10 * value);
+                }
+            }
+
+            return score;
+        }
+        #endregion
+
+        #region Castling
+        /// <summary>
+        /// Adds a small factor if one can castle. Not being used.
+        /// </summary>
+        private static int Castling(Board board)
+        {
+            int resultant = 0;
+
+            if ((board.Castling & 1) != 0) resultant += 25;
+            if ((board.Castling & 2) != 0) resultant += 25;
+            if ((board.Castling & 4) != 0) resultant -= 25;
+            if ((board.Castling & 8) != 0) resultant -= 25;
+
+            return resultant;
+        }
+        #endregion
+
         public static int Board(Board board)
         {
-            int resultant = board.Turn * PieceValues(board);
-            return resultant;
+            return board.Turn * PieceValues(board) + CenterValues(board);
         }
     }
 }

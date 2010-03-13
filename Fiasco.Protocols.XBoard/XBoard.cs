@@ -50,7 +50,7 @@ namespace Fiasco.Protocols
                 {
                     ExecuteCommand(command);
                 }
-                catch
+                catch(InvalidCommandException)
                 {
                     Console.WriteLine("Invalid command");
                 }
@@ -171,11 +171,13 @@ namespace Fiasco.Protocols
                 if (moveCount <= 0)
                     _board.Book.OutOfOpeningBook = true;
                 else
-                    move = moves[_randomNumber.Next(0, moveCount)];
-
-                if (moveCount != 0)
+                {
+                    move = moves[_randomNumber.Next(moveCount)];
                     _board.AddMoveNoBits(move);
-            } else // if we're out of the opening book, use the search
+                }
+            }
+
+            if (_board.Book.OutOfOpeningBook) // if we're out of the opening book, use the search
             {
                 move = Search.Think(_board, 5);
                 _board.AddMove(move);
