@@ -515,14 +515,14 @@ namespace Fiasco
 
             if (turn == Constants.WHITE)
             {
-                if ((_castling & 1) != 0 
+                if ((Castling & 1) != 0 
                     && _pieceArray[26] == Constants.EMPTY
                     && _pieceArray[27] == Constants.EMPTY
                     && !IsAttacked(26, turn)
                     && !IsAttacked(27, turn))
                     moves.Add(new Move(25, 27, 2));
 
-                if ((_castling & 2) != 0
+                if ((Castling & 2) != 0
                     && _pieceArray[22] == Constants.EMPTY
                     && _pieceArray[23] == Constants.EMPTY
                     && _pieceArray[24] == Constants.EMPTY
@@ -533,14 +533,14 @@ namespace Fiasco
             }
             else
             {
-                if ((_castling & 4) != 0
+                if ((Castling & 4) != 0
                     && _pieceArray[96] == Constants.EMPTY
                     && _pieceArray[97] == Constants.EMPTY
                     && !IsAttacked(96, turn)
                     && !IsAttacked(97, turn))
                     moves.Add(new Move(95, 97, 2));
 
-                if ((_castling & 8) != 0
+                if ((Castling & 8) != 0
                     && _pieceArray[92] == Constants.EMPTY
                     && _pieceArray[93] == Constants.EMPTY
                     && _pieceArray[94] == Constants.EMPTY
@@ -620,6 +620,8 @@ namespace Fiasco
         #region AddMove and SubtractMove
         public bool AddMoveNoBits(Move move)
         {
+            move.Bits = 0;
+
             if (_colourArray[move.From] == -1 * _turn)
                 move.Bits += 1;
             
@@ -707,10 +709,6 @@ namespace Fiasco
                         break;
                 }
 
-                if (Turn == Constants.WHITE)
-                    Castling = Castling - 3; // remove white's ability to castle
-                else
-                    Castling = Castling - 12; // remove black's ability to castle
                 _enPassantTarget = Constants.NOENPASSANT;
             }
             // PROMOTION (todo: implement 50 move rule)
@@ -732,18 +730,26 @@ namespace Fiasco
             if (_pieceArray[move.To] == Constants.K)
             {
                 if (Turn == Constants.WHITE)
-                    _castling = _castling - 3; // remove white's ability to castle
+                {
+                    // remove white's ability to castle
+                    if ((_castling & 1) != 0) _castling = _castling - 1;
+                    if ((_castling & 2) != 0) _castling = _castling - 2;
+                }
                 else
-                    _castling = _castling - 12; // remove black's ability to castle
+                {
+                    // remove black's ability to castle
+                    if ((_castling & 4) != 0) _castling = _castling - 4;
+                    if ((_castling & 8) != 0) _castling = _castling - 8;
+                }
             }
 
-            if (move.From == 28 || move.To == 28)
+            if ((move.From == 28 || move.To == 28) && (_castling & 1) != 0)
                 _castling -= 1;
-            else if (move.From == 21 || move.To == 21)
+            else if ((move.From == 21 || move.To == 21) && (_castling & 2) != 0)
                 _castling -= 2;
-            else if (move.From == 98 || move.To == 98)
+            else if ((move.From == 98 || move.To == 98) && (_castling & 4) != 0)
                 _castling -= 4;
-            else if (move.From == 91 || move.To == 91)
+            else if ((move.From == 91 || move.To == 91) && (_castling & 8) != 0)
                 _castling -= 8;
             #endregion
 
@@ -835,9 +841,9 @@ namespace Fiasco
                 }
 
                 if (Turn == Constants.WHITE)
-                    _castling = _castling + 3; // add white's ability to castle
+                    Castling = Castling + 3; // add white's ability to castle
                 else
-                    _castling = _castling + 12; // add black's ability to castle
+                    Castling = Castling + 12; // add black's ability to castle
             }
             // PROMOTION (todo: implement 50 move rule)
             else if ((square.Move.Bits & 4) != 0)

@@ -100,16 +100,22 @@ namespace Fiasco.Protocols
             }
 
             int depth;
-
-            if (command.Split(' ')[0] == "perft" && int.TryParse(command.Split(' ')[1], out depth))
+            string[] commands = command.Split(' ');
+            if (commands[0] == "perft" && int.TryParse(commands[1], out depth))
             {
                 Perft(depth);
                 return;
             }
 
-            if (command.Split(' ')[0] == "divide" && int.TryParse(command.Split(' ')[1], out depth))
+            if (commands[0] == "divide" && int.TryParse(commands[1], out depth))
             {
                 Divide(depth);
+                return;
+            }
+
+            if (commands[0] == "setfen")
+            {
+                _board.SetFen(command.Replace("setfen ", ""));
                 return;
             }
 
