@@ -169,9 +169,7 @@ namespace Fiasco.Protocols
 
                 if (moveCount != 0)
                     _board.AddMoveNoBits(move);
-            }
-
-            if(_board.Book.OutOfOpeningBook) // if we're out of the opening book, use the search
+            } else // if we're out of the opening book, use the search
             {
                 move = Search.Minimax(_board, 3).Move;
                 _board.AddMove(move);
