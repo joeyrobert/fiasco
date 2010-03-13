@@ -40,6 +40,8 @@ namespace Fiasco
         public const int OFF = 7;
         public const int EMPTY = 0;
         public const int NOENPASSANT = -64;
+
+        public const bool ALLOWRANDOM = false;
         #endregion
 
         #region Default Board Setups

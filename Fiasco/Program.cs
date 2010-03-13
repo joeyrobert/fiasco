@@ -26,12 +26,19 @@ namespace Fiasco
         {
             Console.Title = "Fiasco Chess Engine";
             Board board = new Board();
-            board.SetFen("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1");
+            board.SetFen("rnbqkbnr/pppppppp/8/8/8/1q6/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 
             Console.WriteLine("---------------------------");
 
-            Engine.Perft.Divide(board, 2);
-
+            //Console.WriteLine(Engine.Search.AlphaBeta(board, 5, -Engine.Eval.KVALUE, Engine.Eval.KVALUE));
+            //Display.Board(board);
+            //Console.WriteLine(Engine.Search.Minimax(board, 5).Score);
+            DateTime start = DateTime.Now;
+            Engine.Perft.Divide(board, 5);
+            DateTime end = DateTime.Now;
+            Console.WriteLine((end - start).TotalMilliseconds);
+            //Console.WriteLine(Engine.Search.minimax_count);
+            //Console.WriteLine(Constants.MoveToString(Engine.Search._principleVariation[5]));
             Console.Read();
         }
     }

@@ -177,7 +177,7 @@ namespace Fiasco.Protocols
                     _board.AddMoveNoBits(move);
             } else // if we're out of the opening book, use the search
             {
-                move = Search.Minimax(_board, 3).Move;
+                move = Search.Think(_board, 5);
                 _board.AddMove(move);
             }
             Console.WriteLine("move " + Constants.MoveToString(move));

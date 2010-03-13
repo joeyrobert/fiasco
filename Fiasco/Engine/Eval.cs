@@ -27,7 +27,7 @@ namespace Fiasco.Engine
         public const int NVALUE = 300;
         public const int PVALUE = 100;
 
-        public static int PieceValues(Board board)
+        private static int PieceValues(Board board)
         {
             int score = 0;
             int colour;
@@ -59,7 +59,13 @@ namespace Fiasco.Engine
                 }
             }
 
-            return board.Turn * score;
+            return score;
+        }
+
+        public static int Board(Board board)
+        {
+            int resultant = board.Turn * PieceValues(board);
+            return resultant;
         }
     }
 }

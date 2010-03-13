@@ -23,12 +23,14 @@ namespace Fiasco.Engine
 {
     public class Search
     {
+        public static Dictionary<int, Move> _principleVariation = new Dictionary<int, Move>();
+
         public static Pair Minimax(Board board, int depth)
         {
             Move tmpMove = new Move();
 
             if (depth == 0)
-                return new Pair(Eval.PieceValues(board), tmpMove);
+                return new Pair(Eval.Board(board), tmpMove);
 
             List<Move> moveList = board.GenerateMoves();
             Pair best = new Pair();
@@ -48,7 +50,7 @@ namespace Fiasco.Engine
                     best.Set = true;
                 }
                 // if two moves are equivalent, randomly choose one.
-                else if (value == best.Score)
+                else if (value == best.Score && Constants.ALLOWRANDOM)
                 {
                     Random random = new Random((int)(DateTime.Now.Ticks % 1000000));
                     int choice = random.Next(2);
@@ -62,6 +64,42 @@ namespace Fiasco.Engine
             }
 
             return best;
+        }
+
+        public static int AlphaBeta(Board board, int depth, int alpha, int beta)
+        {
+            if (depth == 0)
+                return Eval.Board(board);
+
+            List<Move> moveList = board.GenerateMoves();
+
+            foreach (Move move in moveList)
+            {
+                if (!board.AddMove(move)) continue;
+                int result = -AlphaBeta(board, depth - 1, -beta, -alpha);
+                board.SubtractMove();
+
+                if (result > alpha)
+                {
+                    alpha = result;
+                    if (_principleVariation.ContainsKey(depth))
+                        _principleVariation[depth] = move;
+                    else
+                        _principleVariation.Add(depth, move);
+                }
+
+                if (beta <= alpha)
+                    break;
+            }
+
+            return alpha;
+        }
+
+        public static Move Think(Board board, int depth)
+        {
+            _principleVariation = new Dictionary<int, Move>();
+            AlphaBeta(board, depth, -Eval.KVALUE, Eval.KVALUE);
+            return _principleVariation[depth];
         }
     }
 }
