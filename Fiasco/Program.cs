@@ -27,12 +27,10 @@ namespace Fiasco
             Console.Title = "Fiasco Chess Engine";
             Board board = new Board();
             board.SetFen("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1");
-            Move move = new Move(25, 27, 0, 2);
-            board.AddMove(move);
 
             Console.WriteLine("---------------------------");
 
-            Engine.Perft.Divide(board, 1);
+            Engine.Perft.Divide(board, 2);
 
             Console.Read();
         }

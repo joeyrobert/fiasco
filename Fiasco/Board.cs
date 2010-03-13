@@ -839,11 +839,6 @@ namespace Fiasco
                         MovePiece(94, 91); // left rook
                         break;
                 }
-
-                if (Turn == Constants.WHITE)
-                    Castling = Castling + 3; // add white's ability to castle
-                else
-                    Castling = Castling + 12; // add black's ability to castle
             }
             // PROMOTION (todo: implement 50 move rule)
             else if ((square.Move.Bits & 4) != 0)
