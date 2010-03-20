@@ -26,7 +26,7 @@ namespace Fiasco
         {
             Console.Title = "Fiasco Chess Engine";
             Board board = new Board();
-            board.SetFen("rnbqkbnr/pppppppp/8/8/8/1q6/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+            board.SetFen("8/3K4/2p5/p2b2r1/5k2/8/8/1q6 b - - 1 67");
 
             Console.WriteLine("---------------------------");
 

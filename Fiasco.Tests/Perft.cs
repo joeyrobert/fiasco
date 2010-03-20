@@ -92,6 +92,14 @@ namespace Fiasco.Tests
             ulong perft = Engine.Perft.Minimax(board, 5);
             Assert.AreEqual(674624, perft);
         }
+
+        [Test()]
+        public void Position3_Perft6()
+        {
+            board.SetFen("8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - - 0 1");
+            ulong perft = Engine.Perft.Minimax(board, 6);
+            Assert.AreEqual(11030083, perft);
+        }
         #endregion
 
         #region Position 4
@@ -102,6 +110,35 @@ namespace Fiasco.Tests
             ulong perft = Engine.Perft.Minimax(board, 5);
             Assert.AreEqual(11139762, perft);
         }
+        #endregion
+
+        #region Position 5
+        [Test()]
+        public void Position5_Perft1()
+        {
+            board.SetFen("8/3K4/2p5/p2b2r1/5k2/8/8/1q6 b - - 1 67");
+            ulong perft = Engine.Perft.Minimax(board, 1);
+            Assert.AreEqual(50, perft);
+        }
+
+        [Test()]
+        public void Position5_Perft2()
+        {
+            board.SetFen("8/3K4/2p5/p2b2r1/5k2/8/8/1q6 b - - 1 67");
+            ulong perft = Engine.Perft.Minimax(board, 2);
+            Assert.AreEqual(279, perft);
+        }        
+        #endregion
+
+        #region Position 6
+        [Test()]
+        public void Position6_Perft5()
+        {
+            board.SetFen("rnbqkb1r/ppppp1pp/7n/4Pp2/8/8/PPPP1PPP/RNBQKBNR w KQkq f6 0 3");
+            ulong perft = Engine.Perft.Minimax(board, 5);
+            Assert.AreEqual(11139762, perft);
+        }   
+
         #endregion
 
         #region Check cases
