@@ -93,33 +93,19 @@ namespace Fiasco.Protocols
                     return;
             }
 
-            if (Regex.Match(command, "[a-z][1-8][a-z][1-8][qkbr]?", RegexOptions.IgnoreCase).Success)
-            {
-                iMove(command);
-                return;
-            }
-
-            int depth;
             string[] commands = command.Split(' ');
-            if (commands[0] == "perft" && int.TryParse(commands[1], out depth))
-            {
+            int depth;
+
+            if (Regex.Match(command, "[a-z][1-8][a-z][1-8][qkbr]?", RegexOptions.IgnoreCase).Success)
+                iMove(command);
+            else if (commands[0] == "perft" && int.TryParse(commands[1], out depth))
                 Perft(depth);
-                return;
-            }
-
-            if (commands[0] == "divide" && int.TryParse(commands[1], out depth))
-            {
+            else if (commands[0] == "divide" && int.TryParse(commands[1], out depth))
                 Divide(depth);
-                return;
-            }
-
-            if (commands[0] == "setfen")
-            {
+            else if (commands[0] == "setfen")
                 _board.SetFen(command.Replace("setfen ", ""));
-                return;
-            }
-
-            throw new InvalidCommandException(); 
+            else
+                throw new InvalidCommandException(); 
         }
         #endregion
 
@@ -139,7 +125,6 @@ namespace Fiasco.Protocols
         private void iMove(string command)
         {
             Move move = new Move();
-
             move = Constants.StringToMove(command);
 
             _board.AddMoveNoBits(move);
