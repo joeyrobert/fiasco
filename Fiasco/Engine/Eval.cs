@@ -79,25 +79,17 @@ namespace Fiasco.Engine
                     switch (board.PieceArray[position])
                     {
                         case Constants.K:
-                            value = colour * KVALUE;
-                            break;
-                        case Constants.Q:
-                            value = colour * QVALUE;
-                            break;
-                        case Constants.R:
-                            value = colour * RVALUE;
+                            value = -1 * colour * KVALUE; // bad for the king to be in the center
                             break;
                         case Constants.N:
                             value = colour * NVALUE;
-                            break;
-                        case Constants.B:
-                            value = colour * BVALUE;
                             break;
                         case Constants.P:
                             value = colour * PVALUE;
                             break;
                     }
 
+                    // bonus if you're in the very center
                     if (position == 64 || position == 65 || position == 54 || position == 55)
                         score += (int)(0.20 * value);
                     else
