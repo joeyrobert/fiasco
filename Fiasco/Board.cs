@@ -615,7 +615,7 @@ namespace Fiasco
 
             for (int i = 21; i < 99; i++)
             {
-                if (_pieceArray[i] == Constants.OFF) continue;
+                if (_pieceArray[i] == Constants.EMPTY || _pieceArray[i] == Constants.OFF) continue;
 
                 // if piece is of the same colour and not empty
                 if (_colourArray[i] == turn)

@@ -77,13 +77,19 @@ namespace Fiasco.Engine
 
             List<Move> moveList = board.GenerateMoves();
 
-            // MVV/LVA ordering
-            moveList.Sort(delegate(Move a, Move b)
+            // Put captures at the top of the list
+            int count = moveList.Count, beginningOfList = 0;
+            Move tempMove;
+            for (int i = 0; i < count; i++)
             {
-                int aValue = Eval.PieceValue(board.PieceArray[a.To]) - Eval.PieceValue(board.PieceArray[a.From]);
-                int bValue = Eval.PieceValue(board.PieceArray[b.To]) - Eval.PieceValue(board.PieceArray[b.From]);
-                return bValue.CompareTo(aValue);
-            });
+                if ((moveList[i].Bits & 1) != 0)
+                {
+                    tempMove = moveList[i];
+                    moveList[i] = moveList[beginningOfList];
+                    moveList[beginningOfList] = tempMove;
+                    beginningOfList++;
+                }
+            }
 
             foreach (Move move in moveList)
             {

@@ -16,6 +16,8 @@
  * along with Fiasco.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using System.Collections.Generic;
+
 namespace Fiasco.Engine
 {
     public class Eval
@@ -27,34 +29,57 @@ namespace Fiasco.Engine
         public const int NVALUE = 300;
         public const int PVALUE = 100;
 
+        private static Dictionary<int, int> _pieceValues = new Dictionary<int, int>()
+        {
+            {Constants.K, KVALUE},
+            {Constants.Q, QVALUE},
+            {Constants.R, RVALUE},
+            {Constants.B, BVALUE},
+            {Constants.N, NVALUE},
+            {Constants.P, PVALUE},
+            {Constants.OFF, 0},
+            {Constants.EMPTY, 0}
+        };
+
         #region Piece positioning
         public static int PieceValue(int piece)
         {
-            switch (piece)
-            {
-                case Constants.K:
-                    return KVALUE;
-                case Constants.Q:
-                    return QVALUE;
-                case Constants.R:
-                    return RVALUE;
-                case Constants.N:
-                    return NVALUE;
-                case Constants.B:
-                    return BVALUE;
-                case Constants.P:
-                    return PVALUE;
-                default:
-                    return 0;
-            }
+            return _pieceValues[piece];
         }
 
         private static int SumValues(Board board)
         {
             int score = 0;
+            int colour;
 
             for (int i = 21; i < 99; i++)
-                score += board.ColourArray[i] * PieceValue(board.PieceArray[i]);
+            {
+                colour = board.ColourArray[i];
+
+                // this switch is much faster (3x) than  
+                // something implemented with PieceValue()
+                switch (board.PieceArray[i])
+                {
+                    case Constants.K:
+                        score += colour * KVALUE;
+                        break;
+                    case Constants.Q:
+                        score += colour * QVALUE;
+                        break;
+                    case Constants.R:
+                        score += colour * RVALUE;
+                        break;
+                    case Constants.N:
+                        score += colour * NVALUE;
+                        break;
+                    case Constants.B:
+                        score += colour * BVALUE;
+                        break;
+                    case Constants.P:
+                        score += colour * PVALUE;
+                        break;
+                }
+            }
 
             return score;
         }
