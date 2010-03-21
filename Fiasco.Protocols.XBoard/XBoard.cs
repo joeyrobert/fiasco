@@ -125,6 +125,7 @@ namespace Fiasco.Protocols
             _board.SetFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
             _board.Castling = 15;
             _board.EnPassantTarget = Constants.NOENPASSANT;
+            _board.Book.OutOfOpeningBook = false;            
         }
 
         private void iGo()
