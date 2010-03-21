@@ -120,8 +120,6 @@ namespace Fiasco.Engine
             int i, score;
             _nodesSearched = 0;
 
-            Console.WriteLine("Total milliseconds " + totalMilliseconds);
-
             for (i = 1; ; i++)
             {
                 // Think
