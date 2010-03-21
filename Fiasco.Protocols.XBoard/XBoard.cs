@@ -102,7 +102,7 @@ namespace Fiasco.Protocols
             string[] commands = command.Split(' ');
             int parameter;
 
-            if (Regex.Match(command, "[a-z][1-8][a-z][1-8][qkbr]?", RegexOptions.IgnoreCase).Success)
+            if (Regex.Match(command, "^[a-z][1-8][a-z][1-8][qkbr]?$", RegexOptions.IgnoreCase).Success)
                 iMove(command);
             else if (commands[0] == "perft" && int.TryParse(commands[1], out parameter))
                 Perft(parameter);
