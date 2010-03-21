@@ -29,6 +29,7 @@ namespace Fiasco
     public class Book
     {
         private string[] _lines;
+        private bool _hasOpeningBook = true;
         private bool _outOfOpeningBook = false;
         private int _openingBookDepth = 0;
         private string _openingLine = string.Empty;
@@ -38,7 +39,10 @@ namespace Fiasco
         {
             get
             {
-                return _outOfOpeningBook;
+                if(_hasOpeningBook)
+                    return _outOfOpeningBook;
+
+                return true;
             }
             set
             {
@@ -69,6 +73,18 @@ namespace Fiasco
                 _openingLine = value;
             }
         }
+
+        public bool HasOpeningBook
+        {
+            get
+            {
+                return _hasOpeningBook;
+            }
+            set
+            {
+                _hasOpeningBook = value;
+            }
+        }
         #endregion
 
         /// <summary>
@@ -84,6 +100,7 @@ namespace Fiasco
             catch
             {
                 this.OutOfOpeningBook = true;
+                this.HasOpeningBook = false;
             }
         }
 

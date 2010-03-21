@@ -79,7 +79,7 @@ namespace Fiasco.Engine
                     switch (board.PieceArray[position])
                     {
                         case Constants.K:
-                            value = -1 * colour * KVALUE; // bad for the king to be in the center
+                            value = -1 * colour * PVALUE; // bad for the king to be in the center
                             break;
                         case Constants.N:
                             value = colour * NVALUE;
@@ -120,7 +120,10 @@ namespace Fiasco.Engine
 
         public static int Board(Board board)
         {
-            return board.Turn * PieceValues(board) + CenterValues(board);
+            int pieceValues = PieceValues(board);
+            int centerValues = CenterValues(board);
+
+            return board.Turn * (pieceValues + centerValues);
         }
     }
 }
