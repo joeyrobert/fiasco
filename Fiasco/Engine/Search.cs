@@ -77,6 +77,14 @@ namespace Fiasco.Engine
 
             List<Move> moveList = board.GenerateMoves();
 
+            // MVV/LVA ordering
+            moveList.Sort(delegate(Move a, Move b)
+            {
+                int aValue = Eval.PieceValue(board.PieceArray[a.To]) - Eval.PieceValue(board.PieceArray[a.From]);
+                int bValue = Eval.PieceValue(board.PieceArray[b.To]) - Eval.PieceValue(board.PieceArray[b.From]);
+                return bValue.CompareTo(aValue);
+            });
+
             foreach (Move move in moveList)
             {
                 if (!board.AddMove(move)) continue;
@@ -116,6 +124,7 @@ namespace Fiasco.Engine
         public static Move ThinkIteratively(Board board, int totalMilliseconds, bool xboard)
         {
             DateTime start = DateTime.Now;
+            Move best = new Move();
             TimeSpan elapsedTime;
             int i, score;
             _nodesSearched = 0;
@@ -142,12 +151,17 @@ namespace Fiasco.Engine
                     Console.WriteLine(i + " " + score + " " + (int)(elapsedTime.TotalMilliseconds / 10) + " " + _nodesSearched + " " + moveString);
                 }
 
+                if (score >= Engine.Eval.KVALUE || score <= -Engine.Eval.KVALUE)
+                    break;
+
+                best = _principleVariation[_principleVariation.Count];
+
                 // 0.04 is approx. number_of_moves(depth n) / number_of_moves(depth n + 1)
                 if (elapsedTime.TotalMilliseconds > 0.1 * totalMilliseconds)
                     break;
             }
 
-            return _principleVariation[_principleVariation.Count];
+            return best;
         }
     }
 }

@@ -28,37 +28,33 @@ namespace Fiasco.Engine
         public const int PVALUE = 100;
 
         #region Piece positioning
-        private static int PieceValues(Board board)
+        public static int PieceValue(int piece)
+        {
+            switch (piece)
+            {
+                case Constants.K:
+                    return KVALUE;
+                case Constants.Q:
+                    return QVALUE;
+                case Constants.R:
+                    return RVALUE;
+                case Constants.N:
+                    return NVALUE;
+                case Constants.B:
+                    return BVALUE;
+                case Constants.P:
+                    return PVALUE;
+                default:
+                    return 0;
+            }
+        }
+
+        private static int SumValues(Board board)
         {
             int score = 0;
-            int colour;
 
             for (int i = 21; i < 99; i++)
-            {
-                colour = board.ColourArray[i];
-
-                switch (board.PieceArray[i])
-                {
-                    case Constants.K:
-                        score += colour * KVALUE;
-                        break;
-                    case Constants.Q:
-                        score += colour * QVALUE;
-                        break;
-                    case Constants.R:
-                        score += colour * RVALUE;
-                        break;
-                    case Constants.N:
-                        score += colour * NVALUE;
-                        break;
-                    case Constants.B:
-                        score += colour * BVALUE;
-                        break;
-                    case Constants.P:
-                        score += colour * PVALUE;
-                        break;
-                }
-            }
+                score += board.ColourArray[i] * PieceValue(board.PieceArray[i]);
 
             return score;
         }
@@ -120,7 +116,7 @@ namespace Fiasco.Engine
 
         public static int Board(Board board)
         {
-            int pieceValues = PieceValues(board);
+            int pieceValues = SumValues(board);
             int centerValues = CenterValues(board);
 
             return board.Turn * (pieceValues + centerValues);
