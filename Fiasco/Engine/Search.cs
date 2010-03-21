@@ -143,11 +143,11 @@ namespace Fiasco.Engine
                 }
 
                 // 0.04 is approx. number_of_moves(depth n) / number_of_moves(depth n + 1)
-                if (elapsedTime.TotalMilliseconds > 0.04 * totalMilliseconds)
+                if (elapsedTime.TotalMilliseconds > 0.1 * totalMilliseconds)
                     break;
             }
 
-            return _principleVariation[i];
+            return _principleVariation[_principleVariation.Count];
         }
     }
 }
