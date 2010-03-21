@@ -131,9 +131,14 @@ namespace Fiasco.Engine
                 if (xboard)
                 {
                     string moveString = "";
-                    for(int j = 1; j <= i; j++)
-                        moveString += Constants.MoveToString(_principleVariation[j]) + " ";
+                    for (int j = i; j >= 1; --j)
+                    {
+                        if (!_principleVariation.ContainsKey(j))
+                            break;
 
+                        moveString += Constants.MoveToString(_principleVariation[j]) + " ";
+                    }
+                    
                     Console.WriteLine(i + " " + score + " " + (int)(elapsedTime.TotalMilliseconds / 10) + " " + _nodesSearched + " " + moveString);
                 }
 

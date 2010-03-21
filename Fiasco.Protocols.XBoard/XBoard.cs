@@ -31,7 +31,7 @@ namespace Fiasco.Protocols
     public class XBoard
     {
         private Board _board = new Board();
-        private System.Random _random = new System.Random();
+        private System.Random _random = new System.Random((int)(DateTime.Now.Ticks % int.MaxValue));
         private int _time, _otim = 0;
 
         public XBoard()
@@ -58,6 +58,7 @@ namespace Fiasco.Protocols
                 catch(Exception e)
                 {
                     Console.WriteLine("Error: " + e.Message);
+                    Console.WriteLine("Error: " + e.StackTrace);
                 }
             }
         }
