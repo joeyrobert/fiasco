@@ -24,6 +24,7 @@ namespace Fiasco.Engine
     public class Search
     {
         public static Dictionary<int, Move> _principleVariation = new Dictionary<int, Move>();
+        public static long _nodesSearched = 0;
 
         public static Pair Minimax(Board board, int depth)
         {
@@ -69,7 +70,10 @@ namespace Fiasco.Engine
         public static int AlphaBeta(Board board, int depth, int alpha, int beta)
         {
             if (depth == 0)
+            {
+                _nodesSearched++;
                 return Eval.Board(board);
+            }
 
             List<Move> moveList = board.GenerateMoves();
 
@@ -100,6 +104,47 @@ namespace Fiasco.Engine
             _principleVariation = new Dictionary<int, Move>();
             AlphaBeta(board, depth, -Eval.KVALUE, Eval.KVALUE);
             return _principleVariation[depth];
+        }
+
+        /// <summary>
+        /// Search method with iterative deeping.
+        /// TODO: Move ordering with iterative deepening.
+        /// </summary>
+        /// <param name="board"></param>
+        /// <param name="totalMilliseconds">number of milliseconds to move in (not guaranteed)</param>
+        /// <returns>the best move</returns>
+        public static Move ThinkIteratively(Board board, int totalMilliseconds, bool xboard)
+        {
+            DateTime start = DateTime.Now;
+            TimeSpan elapsedTime;
+            int i, score;
+            _nodesSearched = 0;
+
+            Console.WriteLine("Total milliseconds " + totalMilliseconds);
+
+            for (i = 1; ; i++)
+            {
+                // Think
+                _principleVariation = new Dictionary<int, Move>();
+                score = AlphaBeta(board, i, -Eval.KVALUE, Eval.KVALUE);
+                
+                elapsedTime = (DateTime.Now - start);
+
+                if (xboard)
+                {
+                    string moveString = "";
+                    for(int j = 1; j <= i; j++)
+                        moveString += Constants.MoveToString(_principleVariation[j]) + " ";
+
+                    Console.WriteLine(i + " " + score + " " + (int)(elapsedTime.TotalMilliseconds / 10) + " " + _nodesSearched + " " + moveString);
+                }
+
+                // 0.04 is approx. number_of_moves(depth n) / number_of_moves(depth n + 1)
+                if (elapsedTime.TotalMilliseconds > 0.04 * totalMilliseconds)
+                    break;
+            }
+
+            return _principleVariation[i];
         }
     }
 }

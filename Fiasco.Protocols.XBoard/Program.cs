@@ -26,7 +26,7 @@ namespace Fiasco.Protocols
         {
             Console.Title = "Fiasco Chess Engine - XBoard";
             Board board = new Board();
-            board.SetFen("rnbqkbnr/pppppppp/8/8/8//PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+            board.SetFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 
             XBoard xboard = new Fiasco.Protocols.XBoard();
             xboard.CommandLine();

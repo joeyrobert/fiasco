@@ -31,7 +31,8 @@ namespace Fiasco.Protocols
     public class XBoard
     {
         private Board _board = new Board();
-        private System.Random _randomNumber = new System.Random();
+        private System.Random _random = new System.Random();
+        private int _time, _otim = 0;
 
         public XBoard()
         {
@@ -50,9 +51,13 @@ namespace Fiasco.Protocols
                 {
                     ExecuteCommand(command);
                 }
-                catch(InvalidCommandException)
+                catch (InvalidCommandException)
                 {
                     Console.WriteLine("Invalid command");
+                }
+                catch(Exception e)
+                {
+                    Console.WriteLine("Error: " + e.Message);
                 }
             }
         }
@@ -94,14 +99,18 @@ namespace Fiasco.Protocols
             }
 
             string[] commands = command.Split(' ');
-            int depth;
+            int parameter;
 
             if (Regex.Match(command, "[a-z][1-8][a-z][1-8][qkbr]?", RegexOptions.IgnoreCase).Success)
                 iMove(command);
-            else if (commands[0] == "perft" && int.TryParse(commands[1], out depth))
-                Perft(depth);
-            else if (commands[0] == "divide" && int.TryParse(commands[1], out depth))
-                Divide(depth);
+            else if (commands[0] == "perft" && int.TryParse(commands[1], out parameter))
+                Perft(parameter);
+            else if (commands[0] == "divide" && int.TryParse(commands[1], out parameter))
+                Divide(parameter);
+            else if (commands[0] == "time" && int.TryParse(commands[1], out parameter))
+                _time = parameter;
+            else if (commands[0] == "otim" && int.TryParse(commands[1], out parameter))
+                _otim = parameter;
             else if (commands[0] == "setfen")
                 _board.SetFen(command.Replace("setfen ", ""));
             else
@@ -157,14 +166,17 @@ namespace Fiasco.Protocols
                     _board.Book.OutOfOpeningBook = true;
                 else
                 {
-                    move = moves[_randomNumber.Next(moveCount)];
+                    move = moves[_random.Next(moveCount)];
                     _board.AddMoveNoBits(move);
                 }
             }
 
-            if (_board.Book.OutOfOpeningBook) // if we're out of the opening book, use the search
+            // if we're out of the opening book, use the search.
+            // note: this can't be else'd to the previous if, because
+            // OutOfOpeningBook may change in that if.
+            if (_board.Book.OutOfOpeningBook)
             {
-                move = Search.Think(_board, 5);
+                move = Search.ThinkIteratively(_board, (int)(10 * _time * 0.02), true);
                 _board.AddMove(move);
             }
             Console.WriteLine("move " + Constants.MoveToString(move));
