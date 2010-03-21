@@ -17,6 +17,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 namespace Fiasco
 {
@@ -28,11 +29,14 @@ namespace Fiasco
             Board board = new Board();
             board.SetFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 
-            DateTime start = DateTime.Now;
-            Move result = Engine.Search.ThinkIteratively(board, 5000, true);
-            DateTime end = DateTime.Now;
-            Console.WriteLine((end - start).TotalSeconds);
-            Console.WriteLine(Constants.MoveToString(result));
+            for (int i = 0; i < 3; i++)
+            {
+                DateTime start = DateTime.Now;
+                Engine.Perft.Divide(board, 6);
+                DateTime end = DateTime.Now;
+                Console.WriteLine((end - start).TotalSeconds + " s");
+            }
+
             Console.Read();
         }
     }

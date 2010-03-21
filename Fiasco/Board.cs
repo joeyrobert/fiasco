@@ -33,6 +33,9 @@ namespace Fiasco
         private int _halfMoveClock;
         private int _fullMoveNumber;
 
+        // saves lookup time
+        private int _whiteKing = 0, _blackKing = 0;
+
         private Stack<Square> _history = new Stack<Square>();
         private Book _book = new Book();
         #endregion
@@ -69,6 +72,8 @@ namespace Fiasco
             this.FullMoveNumber = board.FullMoveNumber;
             this.Book = board.Book;
             this.History = board.History;
+            this.WhiteKing = board.WhiteKing;
+            this.BlackKing = board.BlackKing;
         }
         #endregion
 
@@ -153,6 +158,30 @@ namespace Fiasco
             set
             {
                 _halfMoveClock = value;
+            }
+        }
+
+        public int WhiteKing
+        {
+            get
+            {
+                return _whiteKing;
+            }
+            set
+            {
+                _whiteKing = value;
+            }
+        }
+
+        public int BlackKing
+        {
+            get
+            {
+                return _blackKing;
+            }
+            set
+            {
+                _blackKing = value;
             }
         }
 
@@ -255,6 +284,9 @@ namespace Fiasco
 
             // Fullmove Number
             _fullMoveNumber = System.Int32.Parse(fenBoardSplit[5]);
+
+            // Reload the king positions
+            ReloadKings();
         }
         #endregion
 
@@ -351,20 +383,43 @@ namespace Fiasco
             return false;
         }
 
+        /// <summary>
+        /// Check if a side is in check
+        /// </summary>
+        /// <param name="turn">side</param>
+        /// <returns>true if that side is in check</returns>
         public bool IsInCheck(int turn)
         {
-            // Find the king (TODO: add a king variable to board class to speed this up)
-            int king = 0;
+            if (turn == Constants.WHITE)
+                return IsAttacked(this.WhiteKing, turn);
+            else
+                return IsAttacked(this.BlackKing, turn);
+        }
+
+        /// <summary>
+        /// Reloads the king's position variables
+        /// </summary>
+        public void ReloadKings()
+        {
+            int whiteKing = 0;
+            int blackKing = 0;
+
             for (int i = 21; i < 99; i++)
             {
-                if (_colourArray[i] == turn && _pieceArray[i] == Constants.K)
+                if (_pieceArray[i] == Constants.K)
                 {
-                    king = i;
-                    break;
+                    if (_colourArray[i] == Constants.WHITE)
+                        whiteKing = i;
+                    else
+                        blackKing = i;
                 }
+
+                if (blackKing != 0 && whiteKing != 0)
+                    break;
             }
-            if (king == 0) return false;
-            return IsAttacked(king, turn);
+
+            this.WhiteKing = whiteKing;
+            this.BlackKing = blackKing;
         }
         #endregion
 
@@ -726,7 +781,7 @@ namespace Fiasco
 
             // POST MOVE
 
-            #region Remove castling rights
+            #region Remove castling rights and reset king
             if (_pieceArray[move.To] == Constants.K)
             {
                 if (Turn == Constants.WHITE)
@@ -734,12 +789,14 @@ namespace Fiasco
                     // remove white's ability to castle
                     if ((_castling & 1) != 0) _castling = _castling - 1;
                     if ((_castling & 2) != 0) _castling = _castling - 2;
+                    this.WhiteKing = move.To;
                 }
                 else
                 {
                     // remove black's ability to castle
                     if ((_castling & 4) != 0) _castling = _castling - 4;
                     if ((_castling & 8) != 0) _castling = _castling - 8;
+                    this.BlackKing = move.To;
                 }
             }
 
@@ -854,6 +911,15 @@ namespace Fiasco
 
             // Put the old en passant square back
             _enPassantTarget = square.EnPassantTarget;
+
+            // Since the king has been moved back, check the 'from' square
+            if (_pieceArray[square.Move.From] == Constants.K)
+            {
+                if (_colourArray[square.Move.From] == Constants.WHITE)
+                    this.WhiteKing = square.Move.From;
+                else
+                    this.BlackKing = square.Move.From;
+            }
 
             return true;
         }
