@@ -424,9 +424,8 @@ namespace Fiasco
         #endregion
 
         #region Piece Move Generation
-        private List<Move> GeneratePawn(int i, int turn)
+        private List<Move> GeneratePawn(int i, int turn, ref List<Move> moves)
         {
-            List<Move> moves = new List<Move>();
             int newMove;
 
             // Pawn push
@@ -475,9 +474,8 @@ namespace Fiasco
             return moves;
         }
 
-        private List<Move> GenerateKnight(int i, int turn)
+        private List<Move> GenerateKnight(int i, int turn, ref List<Move> moves)
         {
-            List<Move> moves = new List<Move>();
             int newMove;
 
             foreach (int delta in Constants.deltaN)
@@ -491,9 +489,8 @@ namespace Fiasco
             return moves;
         }
 
-        private List<Move> GenerateKing(int i, int turn)
+        private List<Move> GenerateKing(int i, int turn, ref List<Move> moves)
         {
-            List<Move> moves = new List<Move>();
             int newMove;
 
             foreach (int delta in Constants.deltaK)
@@ -507,9 +504,8 @@ namespace Fiasco
             return moves;
         }
 
-        private List<Move> GenerateBishop(int i, int turn)
+        private List<Move> GenerateBishop(int i, int turn, ref List<Move> moves)
         {
-            List<Move> moves = new List<Move>();
             int newMove;
 
             foreach (int delta in Constants.deltaB)
@@ -534,9 +530,8 @@ namespace Fiasco
             return moves;
         }
 
-        private List<Move> GenerateRook(int i, int turn)
+        private List<Move> GenerateRook(int i, int turn, ref List<Move> moves)
         {
-            List<Move> moves = new List<Move>();
             int newMove;
 
             foreach (int delta in Constants.deltaR)
@@ -561,10 +556,8 @@ namespace Fiasco
             return moves;
         }
 
-        private List<Move> GenerateCastle(int turn)
+        private List<Move> GenerateCastle(int turn, ref List<Move> moves)
         {
-            List<Move> moves = new List<Move>();
-
             // can't castle out of check
             if (IsInCheck(turn)) return moves;
 
@@ -623,28 +616,28 @@ namespace Fiasco
                     switch (_pieceArray[i])
                     {
                         case Constants.P:
-                            moves.AddRange(GeneratePawn(i, turn));
+                            GeneratePawn(i, turn, ref moves);
                             break;
                         case Constants.N:
-                            moves.AddRange(GenerateKnight(i, turn));
+                            GenerateKnight(i, turn, ref moves);
                             break;
                         case Constants.K:
-                            moves.AddRange(GenerateKing(i, turn));
+                            GenerateKing(i, turn, ref moves);
                             break;
                         case Constants.B:
-                            moves.AddRange(GenerateBishop(i, turn));
+                            GenerateBishop(i, turn, ref moves);
                             break;
                         case Constants.R:
-                            moves.AddRange(GenerateRook(i, turn));
+                            GenerateRook(i, turn, ref moves);
                             break;
                         case Constants.Q: // QUEEN == BISHOP + ROOK
-                            moves.AddRange(GenerateBishop(i, turn));
-                            moves.AddRange(GenerateRook(i, turn));
+                            GenerateBishop(i, turn, ref moves);
+                            GenerateRook(i, turn, ref moves);
                             break;
                     }
                 }
             }
-            moves.AddRange(GenerateCastle(turn));
+            GenerateCastle(turn, ref moves);
             return moves;
         }
 
