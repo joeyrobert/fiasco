@@ -719,6 +719,19 @@ namespace Fiasco
             // CAPTURE (todo: implement 50 move rule)
             else if ((move.Bits & 1) != 0)
             {
+                if (_pieceArray[move.To] == Constants.K)
+                {
+                    switch (_colourArray[move.To])
+                    {
+                        case Constants.WHITE:
+                            _whiteKing = Constants.EMPTY;
+                            break;
+                        case Constants.BLACK:
+                            _blackKing = Constants.EMPTY;
+                            break;
+                    }
+                }
+
                 MovePiece(move.From, move.To);
                 _enPassantTarget = Constants.NOENPASSANT;
             }
@@ -856,6 +869,19 @@ namespace Fiasco
                 MovePiece(square.Move.To, square.Move.From);
                 _pieceArray[square.Move.To] = square.Piece; // restore the old piece
                 _colourArray[square.Move.To] = square.Colour;
+
+                if (_pieceArray[square.Move.To] == Constants.K)
+                {
+                    switch (_colourArray[square.Move.To])
+                    {
+                        case Constants.WHITE:
+                            _whiteKing = square.Move.To;
+                            break;
+                        case Constants.BLACK:
+                            _blackKing = square.Move.To;
+                            break;
+                    }
+                }
             }
             // DOUBLE PAWN PUSH
             else if ((square.Move.Bits & 8) != 0)
@@ -891,7 +917,7 @@ namespace Fiasco
                 }
             }
             // PROMOTION (todo: implement 50 move rule)
-            else if ((square.Move.Bits & 4) != 0)
+            else if ((square.Move.Bits & 32) != 0)
             {
                 // Move the piece
                 _pieceArray[square.Move.From] = Constants.P;

@@ -23,8 +23,9 @@ namespace Fiasco.Engine
 {
     public class Search
     {
-        public static Dictionary<int, Move> _principleVariation = new Dictionary<int, Move>();
-        public static long _nodesSearched = 0;
+        private static Dictionary<int, Move> _principleVariation = new Dictionary<int, Move>();
+        private static int _ply = 0;        
+        private static long _nodesSearched = 0;
 
         public static Pair Minimax(Board board, int depth)
         {
@@ -69,7 +70,8 @@ namespace Fiasco.Engine
 
         public static int AlphaBeta(Board board, int depth, int alpha, int beta, Move? bestMove)
         {
-            if (depth == 0)
+            // Check for end of search or terminal node
+            if (depth == 0 || board.WhiteKing == Constants.EMPTY || board.BlackKing == Constants.EMPTY)
             {
                 _nodesSearched++;
                 return Eval.Board(board);
@@ -101,16 +103,18 @@ namespace Fiasco.Engine
             foreach (Move move in moveList)
             {
                 if (!board.AddMove(move)) continue;
+                _ply++;
                 int result = -AlphaBeta(board, depth - 1, -beta, -alpha, null);
+                _ply--;
                 board.SubtractMove();
 
                 if (result > alpha)
                 {
                     alpha = result;
-                    if (_principleVariation.ContainsKey(depth))
-                        _principleVariation[depth] = move;
+                    if (_principleVariation.ContainsKey(_ply))
+                        _principleVariation[_ply] = move;
                     else
-                        _principleVariation.Add(depth, move);
+                        _principleVariation.Add(_ply, move);
                 }
 
                 if (beta <= alpha)
@@ -124,7 +128,7 @@ namespace Fiasco.Engine
         {
             _principleVariation = new Dictionary<int, Move>();
             AlphaBeta(board, depth, -Eval.KVALUE, Eval.KVALUE, null);
-            return _principleVariation[depth];
+            return _principleVariation[0];
         }
 
         /// <summary>
@@ -156,7 +160,7 @@ namespace Fiasco.Engine
                 if (xboard)
                 {
                     string moveString = "";
-                    for (int j = i; j >= 1; --j)
+                    for (int j = 0; j < i - 1; j++)
                     {
                         if (!_principleVariation.ContainsKey(j))
                             break;
@@ -170,7 +174,7 @@ namespace Fiasco.Engine
                 if (score >= Engine.Eval.KVALUE || score <= -Engine.Eval.KVALUE)
                     break;
 
-                best = _principleVariation[_principleVariation.Count];
+                best = _principleVariation[0];
 
                 // 0.04 is approx. number_of_moves(depth n) / number_of_moves(depth n + 1)
                 if (elapsedTime.TotalMilliseconds > 0.2 * totalMilliseconds)
