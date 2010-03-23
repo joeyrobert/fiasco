@@ -173,7 +173,7 @@ namespace Fiasco.Protocols
             // OutOfOpeningBook may change in that if.
             if (_board.Book.OutOfOpeningBook)
             {
-                move = Search.ThinkIteratively(_board, (int)(10 * _time * 0.02), true);
+                move = Search.ThinkIteratively(_board, (int)(10 * _time * 0.10), true);
                 _board.AddMove(move);
             }
             Console.WriteLine("move " + Constants.MoveToString(move));

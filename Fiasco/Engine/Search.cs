@@ -67,7 +67,7 @@ namespace Fiasco.Engine
             return best;
         }
 
-        public static int AlphaBeta(Board board, int depth, int alpha, int beta)
+        public static int AlphaBeta(Board board, int depth, int alpha, int beta, Move? bestMove)
         {
             if (depth == 0)
             {
@@ -91,10 +91,17 @@ namespace Fiasco.Engine
                 }
             }
 
+            // Put the previous best move at the top of the list
+            if (bestMove.HasValue && moveList.Contains(bestMove.Value))
+            {
+                moveList.Remove(bestMove.Value);
+                moveList.Insert(0, bestMove.Value);
+            }
+
             foreach (Move move in moveList)
             {
                 if (!board.AddMove(move)) continue;
-                int result = -AlphaBeta(board, depth - 1, -beta, -alpha);
+                int result = -AlphaBeta(board, depth - 1, -beta, -alpha, null);
                 board.SubtractMove();
 
                 if (result > alpha)
@@ -116,7 +123,7 @@ namespace Fiasco.Engine
         public static Move Think(Board board, int depth)
         {
             _principleVariation = new Dictionary<int, Move>();
-            AlphaBeta(board, depth, -Eval.KVALUE, Eval.KVALUE);
+            AlphaBeta(board, depth, -Eval.KVALUE, Eval.KVALUE, null);
             return _principleVariation[depth];
         }
 
@@ -139,7 +146,10 @@ namespace Fiasco.Engine
             {
                 // Think
                 _principleVariation = new Dictionary<int, Move>();
-                score = AlphaBeta(board, i, -Eval.KVALUE, Eval.KVALUE);
+                if (i == 1)
+                    score = AlphaBeta(board, i, -Eval.KVALUE, Eval.KVALUE, null);
+                else
+                    score = AlphaBeta(board, i, -Eval.KVALUE, Eval.KVALUE, best);
                 
                 elapsedTime = (DateTime.Now - start);
 
@@ -163,7 +173,7 @@ namespace Fiasco.Engine
                 best = _principleVariation[_principleVariation.Count];
 
                 // 0.04 is approx. number_of_moves(depth n) / number_of_moves(depth n + 1)
-                if (elapsedTime.TotalMilliseconds > 0.1 * totalMilliseconds)
+                if (elapsedTime.TotalMilliseconds > 0.2 * totalMilliseconds)
                     break;
             }
 
