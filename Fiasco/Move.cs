@@ -59,12 +59,12 @@ namespace Fiasco
             Bits = iBits;
         }
 
-        public Move(int iFrom, int iTo, int iPromote, int iBits)
+        public Move(int iFrom, int iTo, int iBits, int iPromote)
         {
             To = iTo;
             From = iFrom;
-            Promote = iPromote;
             Bits = iBits;
+            Promote = iPromote;
         }
         #endregion
     }

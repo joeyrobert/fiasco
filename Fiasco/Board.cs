@@ -426,7 +426,7 @@ namespace Fiasco
         #region Piece Move Generation
         private List<Move> GeneratePawn(int i, int turn, ref List<Move> moves)
         {
-            int newMove;
+            int newMove, column;
 
             // Promotions
             int lastRank;
@@ -436,10 +436,17 @@ namespace Fiasco
             else
                 lastRank = 1;
 
-            // Pawn push
+            // Pawn push (possible promotion)
             newMove = i + turn * 10;
+            column = Definitions.GetRow(newMove);
+
             if (_pieceArray[newMove] == Definitions.EMPTY)
-                moves.Add(new Move(i, newMove, 16)); // 16 = pawn move
+            {
+                if (column == lastRank)
+                    GeneratePromotions(i, newMove, 16, moves);
+                else
+                    moves.Add(new Move(i, newMove, 16)); // 16 = pawn move
+            }
 
             // Double pawn push
             newMove = i + turn * 20;
@@ -453,14 +460,28 @@ namespace Fiasco
             if (_pieceArray[newMove] == Definitions.EMPTY && _pieceArray[(i + turn * 10)] == Definitions.EMPTY && Definitions.GetRow(i) == firstRank)
                 moves.Add(new Move(i, newMove, 24)); // 24 = pawn move + double pawn push
 
-            // Captures
+            // Captures (possible promotion)
             newMove = i + (9 * turn);
+            column = Definitions.GetRow(newMove);
+
             if (_colourArray[newMove] == -1 * turn)
-                moves.Add(new Move(i, newMove, 17)); // 17 = pawn move + capture
+            {
+                if (column == lastRank)
+                    GeneratePromotions(i, newMove, 17, moves);
+                else
+                    moves.Add(new Move(i, newMove, 17)); // 17 = pawn move + capture
+            }
 
             newMove = i + (11 * turn);
+            column = Definitions.GetRow(newMove);
+
             if (_colourArray[newMove] == -1 * turn)
-                moves.Add(new Move(i, newMove, 17));
+            {
+                if (column == lastRank)
+                    GeneratePromotions(i, newMove, 17, moves);
+                else
+                    moves.Add(new Move(i, newMove, 17)); // 17 = pawn move + capture
+            }
 
             // En passant captures
             newMove = i + (9 * turn);
@@ -472,6 +493,14 @@ namespace Fiasco
                 moves.Add(new Move(i, newMove, 21));
 
             return moves;
+        }
+
+        private void GeneratePromotions(int from, int to, int bits, List<Move> moves)
+        {
+            moves.Add(new Move(from, to, bits + 32, Definitions.N));
+            moves.Add(new Move(from, to, bits + 32, Definitions.B));
+            moves.Add(new Move(from, to, bits + 32, Definitions.R));
+            moves.Add(new Move(from, to, bits + 32, Definitions.Q));
         }
 
         private List<Move> GenerateKnight(int i, int turn, ref List<Move> moves)
@@ -772,17 +801,13 @@ namespace Fiasco
 
                 _enPassantTarget = Definitions.NOENPASSANT;
             }
-            // PROMOTION (todo: implement 50 move rule)
-            else if ((move.Bits & 32) != 0)
-            {
-                // Move the piece
-                _pieceArray[move.To] = move.Promote;
-                _colourArray[move.To] = Turn;
 
-                // Delete the original piece
-                _pieceArray[move.From] = Definitions.EMPTY;
-                _colourArray[move.From] = Definitions.EMPTY;
-                _enPassantTarget = Definitions.NOENPASSANT;
+            // PROMOTION (todo: implement 50 move rule)
+            if ((move.Bits & 32) != 0)
+            {
+                // Everything else should be taken care of by this point.
+                // Just overwrite the underlying piece.
+                _pieceArray[move.To] = move.Promote;
             }
 
             // POST MOVE
@@ -916,16 +941,12 @@ namespace Fiasco
                         break;
                 }
             }
-            // PROMOTION (todo: implement 50 move rule)
-            else if ((square.Move.Bits & 32) != 0)
-            {
-                // Move the piece
-                _pieceArray[square.Move.From] = Definitions.P;
-                _colourArray[square.Move.From] = Turn;
 
-                // Delete the original piece
-                _pieceArray[square.Move.To] = Definitions.EMPTY;
-                _colourArray[square.Move.To] = Definitions.EMPTY;
+            // PROMOTION (todo: implement 50 move rule)
+            if ((square.Move.Bits & 32) != 0)
+            {
+                // Overwrite with a pawn
+                _pieceArray[square.Move.From] = Definitions.P;
             }
 
             // Put the old en passant square back
