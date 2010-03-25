@@ -31,14 +31,14 @@ namespace Fiasco.Engine
 
         private static Dictionary<int, int> _pieceValues = new Dictionary<int, int>()
         {
-            {Constants.K, KVALUE},
-            {Constants.Q, QVALUE},
-            {Constants.R, RVALUE},
-            {Constants.B, BVALUE},
-            {Constants.N, NVALUE},
-            {Constants.P, PVALUE},
-            {Constants.OFF, 0},
-            {Constants.EMPTY, 0}
+            {Definitions.K, KVALUE},
+            {Definitions.Q, QVALUE},
+            {Definitions.R, RVALUE},
+            {Definitions.B, BVALUE},
+            {Definitions.N, NVALUE},
+            {Definitions.P, PVALUE},
+            {Definitions.OFF, 0},
+            {Definitions.EMPTY, 0}
         };
 
         #region Piece positioning
@@ -60,22 +60,22 @@ namespace Fiasco.Engine
                 // something implemented with PieceValue()
                 switch (board.PieceArray[i])
                 {
-                    case Constants.K:
+                    case Definitions.K:
                         score += colour * KVALUE;
                         break;
-                    case Constants.Q:
+                    case Definitions.Q:
                         score += colour * QVALUE;
                         break;
-                    case Constants.R:
+                    case Definitions.R:
                         score += colour * RVALUE;
                         break;
-                    case Constants.N:
+                    case Definitions.N:
                         score += colour * NVALUE;
                         break;
-                    case Constants.B:
+                    case Definitions.B:
                         score += colour * BVALUE;
                         break;
-                    case Constants.P:
+                    case Definitions.P:
                         score += colour * PVALUE;
                         break;
                 }
@@ -99,13 +99,13 @@ namespace Fiasco.Engine
 
                     switch (board.PieceArray[position])
                     {
-                        case Constants.K:
+                        case Definitions.K:
                             value = -1 * colour * PVALUE; // bad for the king to be in the center
                             break;
-                        case Constants.N:
+                        case Definitions.N:
                             value = colour * NVALUE;
                             break;
-                        case Constants.P:
+                        case Definitions.P:
                             value = colour * PVALUE;
                             break;
                     }

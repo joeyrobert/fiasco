@@ -43,13 +43,13 @@ namespace Fiasco
 
                 for (int j = 1; j <= 8; j++)
                 {
-                    index = Constants.GetIndex(i, j);
-                    if (board.ColourArray[index] == Constants.WHITE)
+                    index = Definitions.GetIndex(i, j);
+                    if (board.ColourArray[index] == Definitions.WHITE)
                         Console.ForegroundColor = ConsoleColor.White;
-                    else if (board.ColourArray[index] == Constants.BLACK)
+                    else if (board.ColourArray[index] == Definitions.BLACK)
                         Console.ForegroundColor = ConsoleColor.Black;
 
-                    Console.Write(" " + Constants.PieceValueToString[board.PieceArray[index]]);
+                    Console.Write(" " + Definitions.PieceValueToString[board.PieceArray[index]]);
 
                     if (Console.BackgroundColor == ConsoleColor.Gray)
                         Console.BackgroundColor = ConsoleColor.DarkGray;

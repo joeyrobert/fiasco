@@ -43,12 +43,12 @@ namespace Fiasco
         #region Constructors and Destructor
         public Board()
         {
-            Turn = Constants.WHITE;
+            Turn = Definitions.WHITE;
             FullMoveNumber = 1;
             HalfMoveClock = 0;
             Castling = 15;
-            System.Array.Copy(Constants.BlankArray, this._pieceArray, 120);
-            System.Array.Copy(Constants.BlankArray, this._colourArray, 120);
+            System.Array.Copy(Definitions.BlankArray, this._pieceArray, 120);
+            System.Array.Copy(Definitions.BlankArray, this._colourArray, 120);
         }
 
         public Board(string fenBoard)
@@ -234,22 +234,22 @@ namespace Fiasco
                         // made simpler if you make the board initial empty
                         for (int loop = 0; loop < offset; loop++)
                         {
-                            index = Constants.GetIndex(rowmarker, columnmarker);
-                            _pieceArray[index] = Constants.EMPTY;
-                            _colourArray[index] = Constants.EMPTY;
+                            index = Definitions.GetIndex(rowmarker, columnmarker);
+                            _pieceArray[index] = Definitions.EMPTY;
+                            _colourArray[index] = Definitions.EMPTY;
                             columnmarker++;
                         }
                         continue;
                     }
                     else
                     {
-                        index = Constants.GetIndex(rowmarker, columnmarker);
-                        _pieceArray[index] = Constants.PieceStringToValue[piece.ToString().ToLower()];
+                        index = Definitions.GetIndex(rowmarker, columnmarker);
+                        _pieceArray[index] = Definitions.PieceStringToValue[piece.ToString().ToLower()];
 
                         if (piece.ToString() == piece.ToString().ToUpper())
-                            _colourArray[index] = Constants.WHITE;
+                            _colourArray[index] = Definitions.WHITE;
                         else
-                            _colourArray[index] = Constants.BLACK;
+                            _colourArray[index] = Definitions.BLACK;
                     }
                     columnmarker++;
                 }
@@ -258,9 +258,9 @@ namespace Fiasco
 
             // Active Colour
             if (fenBoardSplit[1] == "w")
-                _turn = Constants.WHITE;
+                _turn = Definitions.WHITE;
             else if (fenBoardSplit[1] == "b")
-                _turn = Constants.BLACK;
+                _turn = Definitions.BLACK;
 
             // Castling Availability
             _castling = 0;
@@ -275,9 +275,9 @@ namespace Fiasco
 
             // En Passant Target Square
             if (fenBoardSplit[3] == "-")
-                _enPassantTarget = Constants.NOENPASSANT;
+                _enPassantTarget = Definitions.NOENPASSANT;
             else
-                _enPassantTarget = Constants.ChessPieceToIndex(fenBoardSplit[3]);
+                _enPassantTarget = Definitions.ChessPieceToIndex(fenBoardSplit[3]);
 
             // Halfmove Clock
             _halfMoveClock = System.Int32.Parse(fenBoardSplit[4]);
@@ -302,16 +302,16 @@ namespace Fiasco
             int newMove;
 
             #region Diagonal (bishop and queen)
-            foreach (int delta in Constants.deltaB)
+            foreach (int delta in Definitions.deltaB)
             {
                 newMove = i + delta;
                 while (true)
                 {
                     // if you are not an off limits piece or my own piece, keep going
-                    if (_pieceArray[newMove] != Constants.OFF && _colourArray[newMove] == Constants.EMPTY)
+                    if (_pieceArray[newMove] != Definitions.OFF && _colourArray[newMove] == Definitions.EMPTY)
                     {
                     }
-                    else if ((_pieceArray[newMove] == Constants.B || _pieceArray[newMove] == Constants.Q) && _colourArray[newMove] == -1 * turn)
+                    else if ((_pieceArray[newMove] == Definitions.B || _pieceArray[newMove] == Definitions.Q) && _colourArray[newMove] == -1 * turn)
                     {
                         return true;
                     }
@@ -324,16 +324,16 @@ namespace Fiasco
             #endregion
 
             #region Horizontal and Vertical (rook and queen)
-            foreach (int delta in Constants.deltaR)
+            foreach (int delta in Definitions.deltaR)
             {
                 newMove = i + delta;
                 while (true)
                 {
                     // if you are not an off limits piece or my own piece, keep going
-                    if (_pieceArray[newMove] != Constants.OFF && _colourArray[newMove] == Constants.EMPTY)
+                    if (_pieceArray[newMove] != Definitions.OFF && _colourArray[newMove] == Definitions.EMPTY)
                     {
                     }
-                    else if ((_pieceArray[newMove] == Constants.R || _pieceArray[newMove] == Constants.Q) && _colourArray[newMove] == -1 * turn)
+                    else if ((_pieceArray[newMove] == Definitions.R || _pieceArray[newMove] == Definitions.Q) && _colourArray[newMove] == -1 * turn)
                     {
                         return true;
                     }
@@ -346,37 +346,37 @@ namespace Fiasco
             #endregion
 
             #region Knight
-            foreach (int delta in Constants.deltaN)
+            foreach (int delta in Definitions.deltaN)
             {
                 newMove = i + delta;
 
-                if (_pieceArray[newMove] == Constants.OFF)
+                if (_pieceArray[newMove] == Definitions.OFF)
                     continue;
                 if (_colourArray[newMove] == -1 * turn
-                    && _pieceArray[newMove] == Constants.N)
+                    && _pieceArray[newMove] == Definitions.N)
                     return true;
             }
             #endregion
 
             #region King
-            foreach (int delta in Constants.deltaK)
+            foreach (int delta in Definitions.deltaK)
             {
                 newMove = i + delta;
 
-                if (_pieceArray[newMove] == Constants.OFF)
+                if (_pieceArray[newMove] == Definitions.OFF)
                     continue;
                 if (_colourArray[newMove] == -1 * turn
-                    && _pieceArray[newMove] == Constants.K)
+                    && _pieceArray[newMove] == Definitions.K)
                     return true;
             }
             #endregion
 
             #region Pawn
             newMove = i + (9 * turn);
-            if (_colourArray[newMove] == -1 * turn && _pieceArray[newMove] == Constants.P)
+            if (_colourArray[newMove] == -1 * turn && _pieceArray[newMove] == Definitions.P)
                 return true;
             newMove = i + (11 * turn);
-            if (_colourArray[newMove] == -1 * turn && _pieceArray[newMove] == Constants.P)
+            if (_colourArray[newMove] == -1 * turn && _pieceArray[newMove] == Definitions.P)
                 return true;
             #endregion
 
@@ -390,7 +390,7 @@ namespace Fiasco
         /// <returns>true if that side is in check</returns>
         public bool IsInCheck(int turn)
         {
-            if (turn == Constants.WHITE)
+            if (turn == Definitions.WHITE)
                 return IsAttacked(this.WhiteKing, turn);
             else
                 return IsAttacked(this.BlackKing, turn);
@@ -406,9 +406,9 @@ namespace Fiasco
 
             for (int i = 21; i < 99; i++)
             {
-                if (_pieceArray[i] == Constants.K)
+                if (_pieceArray[i] == Definitions.K)
                 {
-                    if (_colourArray[i] == Constants.WHITE)
+                    if (_colourArray[i] == Definitions.WHITE)
                         whiteKing = i;
                     else
                         blackKing = i;
@@ -428,21 +428,29 @@ namespace Fiasco
         {
             int newMove;
 
+            // Promotions
+            int lastRank;
+
+            if (turn == Definitions.WHITE)
+                lastRank = 8;
+            else
+                lastRank = 1;
+
             // Pawn push
             newMove = i + turn * 10;
-            if (_pieceArray[newMove] == Constants.EMPTY)
+            if (_pieceArray[newMove] == Definitions.EMPTY)
                 moves.Add(new Move(i, newMove, 16)); // 16 = pawn move
 
             // Double pawn push
             newMove = i + turn * 20;
             int firstRank;
 
-            if (turn == Constants.WHITE)
+            if (turn == Definitions.WHITE)
                 firstRank = 2;
             else
                 firstRank = 7;
 
-            if (_pieceArray[newMove] == Constants.EMPTY && _pieceArray[(i + turn * 10)] == Constants.EMPTY && Constants.GetRow(i) == firstRank)
+            if (_pieceArray[newMove] == Definitions.EMPTY && _pieceArray[(i + turn * 10)] == Definitions.EMPTY && Definitions.GetRow(i) == firstRank)
                 moves.Add(new Move(i, newMove, 24)); // 24 = pawn move + double pawn push
 
             // Captures
@@ -463,14 +471,6 @@ namespace Fiasco
             if (_enPassantTarget == newMove)
                 moves.Add(new Move(i, newMove, 21));
 
-            // Promotions
-            //int lastRank;
-
-            //if (turn == Const.WHITE)
-            //    lastRank = 8;
-            //else
-            //    lastRank = 1;
-
             return moves;
         }
 
@@ -478,12 +478,12 @@ namespace Fiasco
         {
             int newMove;
 
-            foreach (int delta in Constants.deltaN)
+            foreach (int delta in Definitions.deltaN)
             {
                 newMove = i + delta;
-                if (_pieceArray[newMove] != Constants.OFF && _colourArray[newMove] == Constants.EMPTY)
+                if (_pieceArray[newMove] != Definitions.OFF && _colourArray[newMove] == Definitions.EMPTY)
                     moves.Add(new Move(i, newMove, 0));
-                else if (_pieceArray[newMove] != Constants.OFF && _colourArray[newMove] == -1 * turn)
+                else if (_pieceArray[newMove] != Definitions.OFF && _colourArray[newMove] == -1 * turn)
                     moves.Add(new Move(i, newMove, 1)); // 1 = capture
             }
             return moves;
@@ -493,12 +493,12 @@ namespace Fiasco
         {
             int newMove;
 
-            foreach (int delta in Constants.deltaK)
+            foreach (int delta in Definitions.deltaK)
             {
                 newMove = i + delta;
-                if (_pieceArray[newMove] != Constants.OFF && _colourArray[newMove] == Constants.EMPTY)
+                if (_pieceArray[newMove] != Definitions.OFF && _colourArray[newMove] == Definitions.EMPTY)
                     moves.Add(new Move(i, newMove, 0));
-                else if (_pieceArray[newMove] != Constants.OFF && _colourArray[newMove] == -1 * turn)
+                else if (_pieceArray[newMove] != Definitions.OFF && _colourArray[newMove] == -1 * turn)
                     moves.Add(new Move(i, newMove, 1)); // 1 = capture
             }
             return moves;
@@ -508,15 +508,15 @@ namespace Fiasco
         {
             int newMove;
 
-            foreach (int delta in Constants.deltaB)
+            foreach (int delta in Definitions.deltaB)
             {
                 newMove = i + delta;
                 while (true)
                 {
                     // if you are not an off limits piece or my own piece, add move
-                    if (_pieceArray[newMove] != Constants.OFF && _colourArray[newMove] == Constants.EMPTY)
+                    if (_pieceArray[newMove] != Definitions.OFF && _colourArray[newMove] == Definitions.EMPTY)
                         moves.Add(new Move(i, newMove, 0));
-                    else if (_pieceArray[newMove] != Constants.OFF && _colourArray[newMove] == -1 * turn)
+                    else if (_pieceArray[newMove] != Definitions.OFF && _colourArray[newMove] == -1 * turn)
                     {
                         moves.Add(new Move(i, newMove, 1)); // 1 = capture
                         break; // if the place being moved to is a piece from the other team, stop looping
@@ -534,15 +534,15 @@ namespace Fiasco
         {
             int newMove;
 
-            foreach (int delta in Constants.deltaR)
+            foreach (int delta in Definitions.deltaR)
             {
                 newMove = i + delta;
                 while (true)
                 {
                     // if you are not an off limits piece or my own piece, add move
-                    if (_pieceArray[newMove] != Constants.OFF && _colourArray[newMove] == Constants.EMPTY)
+                    if (_pieceArray[newMove] != Definitions.OFF && _colourArray[newMove] == Definitions.EMPTY)
                         moves.Add(new Move(i, newMove, 0));
-                    else if (_pieceArray[newMove] != Constants.OFF && _colourArray[newMove] == -1 * turn)
+                    else if (_pieceArray[newMove] != Definitions.OFF && _colourArray[newMove] == -1 * turn)
                     {
                         moves.Add(new Move(i, newMove, 1)); // 1 = capture
                         break; // if the place being moved to is a piece from the other team, stop looping
@@ -561,19 +561,19 @@ namespace Fiasco
             // can't castle out of check
             if (IsInCheck(turn)) return moves;
 
-            if (turn == Constants.WHITE)
+            if (turn == Definitions.WHITE)
             {
                 if ((Castling & 1) != 0 
-                    && _pieceArray[26] == Constants.EMPTY
-                    && _pieceArray[27] == Constants.EMPTY
+                    && _pieceArray[26] == Definitions.EMPTY
+                    && _pieceArray[27] == Definitions.EMPTY
                     && !IsAttacked(26, turn)
                     && !IsAttacked(27, turn))
                     moves.Add(new Move(25, 27, 2));
 
                 if ((Castling & 2) != 0
-                    && _pieceArray[22] == Constants.EMPTY
-                    && _pieceArray[23] == Constants.EMPTY
-                    && _pieceArray[24] == Constants.EMPTY
+                    && _pieceArray[22] == Definitions.EMPTY
+                    && _pieceArray[23] == Definitions.EMPTY
+                    && _pieceArray[24] == Definitions.EMPTY
                     && !IsAttacked(23, turn)
                     && !IsAttacked(24, turn)
                     && !IsAttacked(25, turn))
@@ -582,16 +582,16 @@ namespace Fiasco
             else
             {
                 if ((Castling & 4) != 0
-                    && _pieceArray[96] == Constants.EMPTY
-                    && _pieceArray[97] == Constants.EMPTY
+                    && _pieceArray[96] == Definitions.EMPTY
+                    && _pieceArray[97] == Definitions.EMPTY
                     && !IsAttacked(96, turn)
                     && !IsAttacked(97, turn))
                     moves.Add(new Move(95, 97, 2));
 
                 if ((Castling & 8) != 0
-                    && _pieceArray[92] == Constants.EMPTY
-                    && _pieceArray[93] == Constants.EMPTY
-                    && _pieceArray[94] == Constants.EMPTY
+                    && _pieceArray[92] == Definitions.EMPTY
+                    && _pieceArray[93] == Definitions.EMPTY
+                    && _pieceArray[94] == Definitions.EMPTY
                     && !IsAttacked(93, turn)
                     && !IsAttacked(94, turn)
                     && !IsAttacked(95, turn))
@@ -608,29 +608,29 @@ namespace Fiasco
 
             for (int i = 21; i < 99; i++)
             {
-                if (_pieceArray[i] == Constants.EMPTY || _pieceArray[i] == Constants.OFF) continue;
+                if (_pieceArray[i] == Definitions.EMPTY || _pieceArray[i] == Definitions.OFF) continue;
 
                 // if piece is of the same colour and not empty
                 if (_colourArray[i] == turn)
                 {
                     switch (_pieceArray[i])
                     {
-                        case Constants.P:
+                        case Definitions.P:
                             GeneratePawn(i, turn, ref moves);
                             break;
-                        case Constants.N:
+                        case Definitions.N:
                             GenerateKnight(i, turn, ref moves);
                             break;
-                        case Constants.K:
+                        case Definitions.K:
                             GenerateKing(i, turn, ref moves);
                             break;
-                        case Constants.B:
+                        case Definitions.B:
                             GenerateBishop(i, turn, ref moves);
                             break;
-                        case Constants.R:
+                        case Definitions.R:
                             GenerateRook(i, turn, ref moves);
                             break;
-                        case Constants.Q: // QUEEN == BISHOP + ROOK
+                        case Definitions.Q: // QUEEN == BISHOP + ROOK
                             GenerateBishop(i, turn, ref moves);
                             GenerateRook(i, turn, ref moves);
                             break;
@@ -660,8 +660,8 @@ namespace Fiasco
             _colourArray[to] = _colourArray[from];
 
             // Delete the original piece
-            _pieceArray[from] = Constants.EMPTY;
-            _colourArray[from] = Constants.EMPTY;
+            _pieceArray[from] = Definitions.EMPTY;
+            _colourArray[from] = Definitions.EMPTY;
         }
         #endregion
 
@@ -684,14 +684,14 @@ namespace Fiasco
                     move.Bits += 2;
             }
 
-            if (_pieceArray[move.From] == Constants.P)
+            if (_pieceArray[move.From] == Definitions.P)
                 move.Bits += 16;
 
-            if (_pieceArray[move.From] == Constants.P && move.To == move.From + 20 * _colourArray[move.From])
+            if (_pieceArray[move.From] == Definitions.P && move.To == move.From + 20 * _colourArray[move.From])
                 move.Bits += 8;
 
             _book.OpeningBookDepth++;
-            _book.OpeningLine += Constants.MoveToString(move);
+            _book.OpeningLine += Definitions.MoveToString(move);
             return AddMove(move);
         }
 
@@ -704,7 +704,7 @@ namespace Fiasco
 			if (move.Bits == 0)
 			{
                 MovePiece(move.From, move.To);
-                _enPassantTarget = Constants.NOENPASSANT;
+                _enPassantTarget = Definitions.NOENPASSANT;
             }
             // EN PASSANT
             else if ((move.Bits & 4) != 0)
@@ -712,28 +712,28 @@ namespace Fiasco
                 MovePiece(move.From, move.To);
 
                 // Delete the en passant target square
-                _pieceArray[_enPassantTarget - Turn * 10] = Constants.EMPTY;
-                _colourArray[_enPassantTarget - Turn * 10] = Constants.EMPTY;
-                _enPassantTarget = Constants.NOENPASSANT;
+                _pieceArray[_enPassantTarget - Turn * 10] = Definitions.EMPTY;
+                _colourArray[_enPassantTarget - Turn * 10] = Definitions.EMPTY;
+                _enPassantTarget = Definitions.NOENPASSANT;
             }
             // CAPTURE (todo: implement 50 move rule)
             else if ((move.Bits & 1) != 0)
             {
-                if (_pieceArray[move.To] == Constants.K)
+                if (_pieceArray[move.To] == Definitions.K)
                 {
                     switch (_colourArray[move.To])
                     {
-                        case Constants.WHITE:
-                            _whiteKing = Constants.EMPTY;
+                        case Definitions.WHITE:
+                            _whiteKing = Definitions.EMPTY;
                             break;
-                        case Constants.BLACK:
-                            _blackKing = Constants.EMPTY;
+                        case Definitions.BLACK:
+                            _blackKing = Definitions.EMPTY;
                             break;
                     }
                 }
 
                 MovePiece(move.From, move.To);
-                _enPassantTarget = Constants.NOENPASSANT;
+                _enPassantTarget = Definitions.NOENPASSANT;
             }
             // DOUBLE PAWN PUSH (todo: implement 50 move rule)
             else if ((move.Bits & 8) != 0)
@@ -745,7 +745,7 @@ namespace Fiasco
             else if ((move.Bits & 16) != 0)
             {
                 MovePiece(move.From, move.To);
-                _enPassantTarget = Constants.NOENPASSANT;
+                _enPassantTarget = Definitions.NOENPASSANT;
             }
             // CASTLING MOVE
             else if ((move.Bits & 2) != 0)
@@ -770,7 +770,7 @@ namespace Fiasco
                         break;
                 }
 
-                _enPassantTarget = Constants.NOENPASSANT;
+                _enPassantTarget = Definitions.NOENPASSANT;
             }
             // PROMOTION (todo: implement 50 move rule)
             else if ((move.Bits & 32) != 0)
@@ -780,17 +780,17 @@ namespace Fiasco
                 _colourArray[move.To] = Turn;
 
                 // Delete the original piece
-                _pieceArray[move.From] = Constants.EMPTY;
-                _colourArray[move.From] = Constants.EMPTY;
-                _enPassantTarget = Constants.NOENPASSANT;
+                _pieceArray[move.From] = Definitions.EMPTY;
+                _colourArray[move.From] = Definitions.EMPTY;
+                _enPassantTarget = Definitions.NOENPASSANT;
             }
 
             // POST MOVE
 
             #region Remove castling rights and reset king
-            if (_pieceArray[move.To] == Constants.K)
+            if (_pieceArray[move.To] == Definitions.K)
             {
-                if (Turn == Constants.WHITE)
+                if (Turn == Definitions.WHITE)
                 {
                     // remove white's ability to castle
                     if ((_castling & 1) != 0) _castling = _castling - 1;
@@ -817,7 +817,7 @@ namespace Fiasco
             #endregion
 
             // Increment the full move number after black
-            if (Turn == Constants.BLACK)
+            if (Turn == Definitions.BLACK)
                 _fullMoveNumber++;
 
             // Switch the active turn
@@ -843,7 +843,7 @@ namespace Fiasco
             Turn = -1 * Turn;
 
             // Decrement the full move number after black
-            if (Turn == Constants.BLACK)
+            if (Turn == Definitions.BLACK)
                 _fullMoveNumber--;
 
             // Restore castling rights
@@ -860,7 +860,7 @@ namespace Fiasco
                 MovePiece(square.Move.To, square.Move.From);
 
                 // Add the piece back to the en passant target square
-                _pieceArray[square.EnPassantTarget - Turn * 10] = Constants.P;
+                _pieceArray[square.EnPassantTarget - Turn * 10] = Definitions.P;
                 _colourArray[square.EnPassantTarget - Turn * 10] = -1 * Turn;
             }
             // CAPTURE
@@ -870,14 +870,14 @@ namespace Fiasco
                 _pieceArray[square.Move.To] = square.Piece; // restore the old piece
                 _colourArray[square.Move.To] = square.Colour;
 
-                if (_pieceArray[square.Move.To] == Constants.K)
+                if (_pieceArray[square.Move.To] == Definitions.K)
                 {
                     switch (_colourArray[square.Move.To])
                     {
-                        case Constants.WHITE:
+                        case Definitions.WHITE:
                             _whiteKing = square.Move.To;
                             break;
-                        case Constants.BLACK:
+                        case Definitions.BLACK:
                             _blackKing = square.Move.To;
                             break;
                     }
@@ -920,21 +920,21 @@ namespace Fiasco
             else if ((square.Move.Bits & 32) != 0)
             {
                 // Move the piece
-                _pieceArray[square.Move.From] = Constants.P;
+                _pieceArray[square.Move.From] = Definitions.P;
                 _colourArray[square.Move.From] = Turn;
 
                 // Delete the original piece
-                _pieceArray[square.Move.To] = Constants.EMPTY;
-                _colourArray[square.Move.To] = Constants.EMPTY;
+                _pieceArray[square.Move.To] = Definitions.EMPTY;
+                _colourArray[square.Move.To] = Definitions.EMPTY;
             }
 
             // Put the old en passant square back
             _enPassantTarget = square.EnPassantTarget;
 
             // Since the king has been moved back, check the 'from' square
-            if (_pieceArray[square.Move.From] == Constants.K)
+            if (_pieceArray[square.Move.From] == Definitions.K)
             {
-                if (_colourArray[square.Move.From] == Constants.WHITE)
+                if (_colourArray[square.Move.From] == Definitions.WHITE)
                     this.WhiteKing = square.Move.From;
                 else
                     this.BlackKing = square.Move.From;

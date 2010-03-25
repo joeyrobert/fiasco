@@ -53,7 +53,7 @@
   <ItemGroup>
     <Compile Include="Board.cs" />
     <Compile Include="Book.cs" />
-    <Compile Include="Constants.cs" />
+    <Compile Include="Definitions.cs" />
     <Compile Include="Display.cs" />
     <Compile Include="Engine\Eval.cs" />
     <Compile Include="Move.cs" />

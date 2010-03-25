@@ -53,7 +53,7 @@ namespace Fiasco.Engine
                 {
                     ulong current = Minimax(board, depth - 1);
                     total += current;
-                    Console.WriteLine(Constants.MoveToString(move) + "\t" + current);
+                    Console.WriteLine(Definitions.MoveToString(move) + "\t" + current);
                     board.SubtractMove();
                 }
             }

@@ -119,7 +119,7 @@ namespace Fiasco.Protocols
         {
             _board.SetFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
             _board.Castling = 15;
-            _board.EnPassantTarget = Constants.NOENPASSANT;
+            _board.EnPassantTarget = Definitions.NOENPASSANT;
             _board.Book.OutOfOpeningBook = false;
         }
 
@@ -131,7 +131,7 @@ namespace Fiasco.Protocols
         private void iMove(string command)
         {
             Move move = new Move();
-            move = Constants.StringToMove(command);
+            move = Definitions.StringToMove(command);
 
             _board.AddMoveNoBits(move);
             oMove();
@@ -139,12 +139,12 @@ namespace Fiasco.Protocols
 
         private void iBlack()
         {
-            _board.Turn = Constants.BLACK;
+            _board.Turn = Definitions.BLACK;
         }
 
         private void iWhite()
         {
-            _board.Turn = Constants.WHITE;
+            _board.Turn = Definitions.WHITE;
         }
         #endregion
 
@@ -176,7 +176,7 @@ namespace Fiasco.Protocols
                 move = Search.ThinkIteratively(_board, (int)(10 * _time * 0.10), true);
                 _board.AddMove(move);
             }
-            Console.WriteLine("move " + Constants.MoveToString(move));
+            Console.WriteLine("move " + Definitions.MoveToString(move));
         }
         #endregion
 

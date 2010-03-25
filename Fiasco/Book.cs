@@ -118,7 +118,7 @@ namespace Fiasco
                 if (!alreadyAdded.Contains(moveString))
                 {
                     alreadyAdded.Add(moveString);
-                    moves.Add(new Move(Constants.StringToMove(moveString)));
+                    moves.Add(new Move(Definitions.StringToMove(moveString)));
                 }
             }
 

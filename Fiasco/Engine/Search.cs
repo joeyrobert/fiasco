@@ -52,7 +52,7 @@ namespace Fiasco.Engine
                     best.Set = true;
                 }
                 // if two moves are equivalent, randomly choose one.
-                else if (value == best.Score && Constants.ALLOWRANDOM)
+                else if (value == best.Score && Definitions.ALLOWRANDOM)
                 {
                     Random random = new Random((int)(DateTime.Now.Ticks % 1000000));
                     int choice = random.Next(2);
@@ -71,7 +71,7 @@ namespace Fiasco.Engine
         public static int AlphaBeta(Board board, int depth, int alpha, int beta, Move? bestMove)
         {
             // Check for end of search or terminal node
-            if (depth == 0 || board.WhiteKing == Constants.EMPTY || board.BlackKing == Constants.EMPTY)
+            if (depth == 0 || board.WhiteKing == Definitions.EMPTY || board.BlackKing == Definitions.EMPTY)
             {
                 _nodesSearched++;
                 return Eval.Board(board);
@@ -165,7 +165,7 @@ namespace Fiasco.Engine
                         if (!_principleVariation.ContainsKey(j))
                             break;
 
-                        moveString += Constants.MoveToString(_principleVariation[j]) + " ";
+                        moveString += Definitions.MoveToString(_principleVariation[j]) + " ";
                     }
                     
                     Console.WriteLine(i + " " + score + " " + (int)(elapsedTime.TotalMilliseconds / 10) + " " + _nodesSearched + " " + moveString);
