@@ -424,7 +424,7 @@ namespace Fiasco
         #endregion
 
         #region Piece Move Generation
-        private List<Move> GeneratePawn(int i, int turn, ref List<Move> moves)
+        private void GeneratePawn(int i, int turn, ref List<Move> moves)
         {
             int newMove, column;
 
@@ -491,8 +491,6 @@ namespace Fiasco
             newMove = i + (11 * turn);
             if (_enPassantTarget == newMove)
                 moves.Add(new Move(i, newMove, 21));
-
-            return moves;
         }
 
         private void GeneratePromotions(int from, int to, int bits, List<Move> moves)
@@ -503,7 +501,7 @@ namespace Fiasco
             moves.Add(new Move(from, to, bits + 32, Definitions.Q));
         }
 
-        private List<Move> GenerateKnight(int i, int turn, ref List<Move> moves)
+        private void GenerateKnight(int i, int turn, ref List<Move> moves)
         {
             int newMove;
 
@@ -515,10 +513,9 @@ namespace Fiasco
                 else if (_pieceArray[newMove] != Definitions.OFF && _colourArray[newMove] == -1 * turn)
                     moves.Add(new Move(i, newMove, 1)); // 1 = capture
             }
-            return moves;
         }
 
-        private List<Move> GenerateKing(int i, int turn, ref List<Move> moves)
+        private void GenerateKing(int i, int turn, ref List<Move> moves)
         {
             int newMove;
 
@@ -530,10 +527,9 @@ namespace Fiasco
                 else if (_pieceArray[newMove] != Definitions.OFF && _colourArray[newMove] == -1 * turn)
                     moves.Add(new Move(i, newMove, 1)); // 1 = capture
             }
-            return moves;
         }
 
-        private List<Move> GenerateBishop(int i, int turn, ref List<Move> moves)
+        private void GenerateBishop(int i, int turn, ref List<Move> moves)
         {
             int newMove;
 
@@ -556,10 +552,9 @@ namespace Fiasco
                     newMove += delta;
                 }
             }
-            return moves;
         }
 
-        private List<Move> GenerateRook(int i, int turn, ref List<Move> moves)
+        private void GenerateRook(int i, int turn, ref List<Move> moves)
         {
             int newMove;
 
@@ -582,13 +577,12 @@ namespace Fiasco
                     newMove += delta;
                 }
             }
-            return moves;
         }
 
-        private List<Move> GenerateCastle(int turn, ref List<Move> moves)
+        private void GenerateCastle(int turn, ref List<Move> moves)
         {
             // can't castle out of check
-            if (IsInCheck(turn)) return moves;
+            if (IsInCheck(turn)) return;
 
             if (turn == Definitions.WHITE)
             {
@@ -626,7 +620,6 @@ namespace Fiasco
                     && !IsAttacked(95, turn))
                     moves.Add(new Move(95, 93, 2)); 
             }
-            return moves;
         }
         #endregion
 
