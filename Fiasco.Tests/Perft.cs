@@ -130,13 +130,23 @@ namespace Fiasco.Tests
         }        
         #endregion
 
-        #region Position 
+        #region Position 6
         [Test()]
         public void Position6_Perft1()
         {
             board.SetFen("1r1qk2r/5ppp/Q2p4/6R1/4P1bq/2N5/P1P5/4K1N1 b k - 0 23");
             ulong perft = Engine.Perft.Minimax(board, 1);
             Assert.AreEqual(47, perft);
+        }
+        #endregion
+
+        #region Position 7
+        [Test()]
+        public void Position7_Perft6()
+        {
+            board.SetFen("8/7p/p5pb/4k3/P1pPn3/8/P5PP/1rB2RK1 b - d3 0 28");
+            ulong perft = Engine.Perft.Minimax(board, 6);
+            Assert.AreEqual(38633283, perft);
         }
         #endregion
 
