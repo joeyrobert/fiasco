@@ -688,32 +688,43 @@ namespace Fiasco
         #endregion
 
         #region AddMove and SubtractMove
+        /// <summary>
+        /// Add move without the bits field set. Determines the bit fields.
+        /// Note: It does not attempt to determine promotion bits. That should
+        /// be taken care of by StringToMove()
+        /// </summary>
+        /// <param name="move">Move without bits</param>
+        /// <returns>whether the addition was successful</returns>
         public bool AddMoveNoBits(Move move)
         {
-            move.Bits = 0;
-
-            if (_colourArray[move.From] == -1 * _turn)
+            // Capture
+            if (_colourArray[move.To] == -1 * _turn)
                 move.Bits += 1;
-            
-            if (move.From == 25)
-            {
-                if (move.To == 27 || move.To == 23)
-                    move.Bits += 2;
-            }
-            else if (move.From == 95)
-            {
-                if (move.To == 97 || move.To == 93)
-                    move.Bits += 2;
-            }
 
+            // Castling
+            if (move.From == 25 && (move.To == 27 || move.To == 23))
+                move.Bits += 2;
+            else if (move.From == 95 && (move.To == 97 || move.To == 93))
+                move.Bits += 2;
+
+            // En passant capture (rather naive for now)
+            if (_pieceArray[move.From] == Definitions.P && (move.To == move.From + 9 * _turn || move.To == move.From + 11 * _turn) && _pieceArray[move.To] == Definitions.EMPTY) 
+                move.Bits += 4;
+
+            // Double pawn push
+            if (_pieceArray[move.From] == Definitions.P && move.To == move.From + 20 * _turn)
+                move.Bits += 8;
+
+            // Pawn move
             if (_pieceArray[move.From] == Definitions.P)
                 move.Bits += 16;
 
-            if (_pieceArray[move.From] == Definitions.P && move.To == move.From + 20 * _colourArray[move.From])
-                move.Bits += 8;
-
-            _book.OpeningBookDepth++;
-            _book.OpeningLine += Definitions.MoveToString(move);
+            // Add to the opening book if we're in it
+            if (!_book.OutOfOpeningBook)
+            {
+                _book.OpeningBookDepth++;
+                _book.OpeningLine += Definitions.MoveToString(move);
+            }
             return AddMove(move);
         }
 
