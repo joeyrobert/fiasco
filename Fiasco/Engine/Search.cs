@@ -74,7 +74,7 @@ namespace Fiasco.Engine
             if (depth == 0 || board.WhiteKing == Definitions.EMPTY || board.BlackKing == Definitions.EMPTY)
             {
                 _nodesSearched++;
-                return Eval.Board(board);
+                return Quiescence(board, alpha, beta);
             }
 
             List<Move> moveList = board.GenerateMoves();
@@ -182,6 +182,32 @@ namespace Fiasco.Engine
             }
 
             return best;
+        }
+
+        private static int Quiescence(Board board, int alpha, int beta)
+        {
+            int stand_pat = Engine.Eval.Board(board);
+
+            if (stand_pat >= beta)
+                return beta;
+            if (alpha < stand_pat)
+                alpha = stand_pat;
+
+            List<Move> captures = board.GenerateCaptures();
+            foreach (Move move in captures)
+            {
+                if (!board.AddMove(move)) continue;
+                int score = -Quiescence(board, -beta, -alpha);
+                board.SubtractMove();
+
+                if (score >= beta)
+                    return beta;
+                if (score > alpha)
+                    alpha = score;
+            }
+
+            return alpha;
+
         }
     }
 }
