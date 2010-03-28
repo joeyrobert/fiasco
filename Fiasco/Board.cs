@@ -807,6 +807,14 @@ namespace Fiasco
                 }
             }
 
+            // MVV/LVA ordering
+            moves.Sort(delegate(Move a, Move b)
+            {
+                int aValue = Engine.Eval.PieceValue(_pieceArray[a.To]) - Engine.Eval.PieceValue(_pieceArray[a.From]);
+                int bValue = Engine.Eval.PieceValue(_pieceArray[b.To]) - Engine.Eval.PieceValue(_pieceArray[b.From]);
+                return bValue.CompareTo(aValue);
+            });
+
             return moves;
         }
 
