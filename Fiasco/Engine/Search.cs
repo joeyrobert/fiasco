@@ -26,6 +26,7 @@ namespace Fiasco.Engine
         private static Move[] _principleVariation = new Move[64];
         private static int _ply = 0;        
         private static long _nodesSearched = 0;
+        private static Random _random = new Random((int)(DateTime.Now.Ticks % 1000000));
 
         #region Core search methods
 
@@ -54,16 +55,10 @@ namespace Fiasco.Engine
                     best.Set = true;
                 }
                 // if two moves are equivalent, randomly choose one.
-                else if (value == best.Score && Definitions.ALLOWRANDOM)
+                else if (value == best.Score && Definitions.ALLOWRANDOM && RandomBool())
                 {
-                    Random random = new Random((int)(DateTime.Now.Ticks % 1000000));
-                    int choice = random.Next(2);
-
-                    if (choice == 1)
-                    {
-                        best.Move = move;
-                        best.Score = value;
-                    }
+                    best.Move = move;
+                    best.Score = value;
                 }
             }
 
@@ -113,7 +108,7 @@ namespace Fiasco.Engine
                 if (result > alpha)
                 {
                     alpha = result;
-                        _principleVariation[_ply] = move;
+                    _principleVariation[_ply] = move;
                 }
 
                 if (beta <= alpha)
@@ -216,6 +211,15 @@ namespace Fiasco.Engine
             }
 
             return best;
+        }
+
+        #endregion
+
+        #region Utility methods
+
+        private static bool RandomBool()
+        {
+            return _random.Next(2) == 1;
         }
 
         #endregion
