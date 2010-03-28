@@ -167,34 +167,39 @@ namespace Fiasco.Engine
 
         private static int SumValues(Board board)
         {
-            int score = 0;
-            int colour;
+            int score = 0, colour, maskIndex;
 
             for (int i = 21; i < 99; i++)
             {
                 colour = board.ColourArray[i];
+
+                // swap rows for black
+                if (colour == Definitions.BLACK)
+                    maskIndex = Definitions.GetIndex(9 - Definitions.GetRow(i), Definitions.GetColumn(i));
+                else
+                    maskIndex = i;
 
                 // this switch is much faster (3x) than  
                 // something implemented with PieceValue()
                 switch (board.PieceArray[i])
                 {
                     case Definitions.K:
-                        score += colour * KVALUE;
+                        score += colour * (KVALUE + _kingMask[maskIndex]);
                         break;
                     case Definitions.Q:
-                        score += colour * QVALUE;
+                        score += colour * (QVALUE + _queenMask[maskIndex]);
                         break;
                     case Definitions.R:
-                        score += colour * RVALUE;
+                        score += colour * (RVALUE + _rookMask[maskIndex]);
                         break;
                     case Definitions.N:
-                        score += colour * NVALUE;
+                        score += colour * (NVALUE + _knightMask[maskIndex]);
                         break;
                     case Definitions.B:
-                        score += colour * BVALUE;
+                        score += colour * (BVALUE + _bishopMask[maskIndex]);
                         break;
                     case Definitions.P:
-                        score += colour * PVALUE;
+                        score += colour * (PVALUE + _pawnMask[maskIndex]);
                         break;
                 }
             }
@@ -260,9 +265,9 @@ namespace Fiasco.Engine
         public static int Board(Board board)
         {
             int pieceValues = SumValues(board);
-            int centerValues = CenterValues(board);
+            //int centerValues = CenterValues(board);
 
-            return board.Turn * (pieceValues + centerValues);
+            return board.Turn * pieceValues;
         }
     }
 }
