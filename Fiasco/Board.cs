@@ -623,6 +623,110 @@ namespace Fiasco
         }
         #endregion
 
+        #region Generate Captures
+
+        private void GeneratePawnCaptures(int i, int turn, ref List<Move> moves)
+        {
+            int lastRank;
+
+            if (turn == Definitions.WHITE)
+                lastRank = 8;
+            else
+                lastRank = 1;
+
+            int newMove = i + (9 * turn);
+            int column = Definitions.GetRow(newMove);
+
+            if (_colourArray[newMove] == -1 * turn)
+            {
+                if (column == lastRank)
+                    GeneratePromotions(i, newMove, 17, moves);
+                else
+                    moves.Add(new Move(i, newMove, 17)); // 17 = pawn move + capture
+            }
+
+            newMove = i + (11 * turn);
+            column = Definitions.GetRow(newMove);
+
+            if (_colourArray[newMove] == -1 * turn)
+            {
+                if (column == lastRank)
+                    GeneratePromotions(i, newMove, 17, moves);
+                else
+                    moves.Add(new Move(i, newMove, 17)); // 17 = pawn move + capture
+            }
+        }
+
+        private void GenerateKnightCaptures(int i, int turn, ref List<Move> moves)
+        {
+            int newMove;
+
+            foreach (int delta in Definitions.deltaN)
+            {
+                newMove = i + delta;
+                if (_pieceArray[newMove] != Definitions.OFF && _colourArray[newMove] == -1 * turn)
+                    moves.Add(new Move(i, newMove, 1)); // 1 = capture
+            }
+        }
+
+        private void GenerateKingCaptures(int i, int turn, ref List<Move> moves)
+        {
+            int newMove;
+
+            foreach (int delta in Definitions.deltaK)
+            {
+                newMove = i + delta;
+                if (_pieceArray[newMove] != Definitions.OFF && _colourArray[newMove] == -1 * turn)
+                    moves.Add(new Move(i, newMove, 1)); // 1 = capture
+            }
+        }
+
+        private void GenerateBishopCaptures(int i, int turn, ref List<Move> moves)
+        {
+            int newMove;
+
+            foreach (int delta in Definitions.deltaB)
+            {
+                newMove = i + delta;
+                while (true)
+                {
+                    if (_pieceArray[newMove] != Definitions.OFF && _colourArray[newMove] == Definitions.EMPTY)
+                        newMove += delta;
+                    else if (_pieceArray[newMove] != Definitions.OFF && _colourArray[newMove] == -1 * turn)
+                    {
+                        moves.Add(new Move(i, newMove, 1)); // 1 = capture
+                        break;
+                    }
+                    else
+                        break;
+                }
+            }
+        }
+
+        private void GenerateRookCaptures(int i, int turn, ref List<Move> moves)
+        {
+            int newMove;
+
+            foreach (int delta in Definitions.deltaR)
+            {
+                newMove = i + delta;
+                while (true)
+                {
+                    if (_pieceArray[newMove] != Definitions.OFF && _colourArray[newMove] == Definitions.EMPTY)
+                        newMove += delta;
+                    else if (_pieceArray[newMove] != Definitions.OFF && _colourArray[newMove] == -1 * turn)
+                    {
+                        moves.Add(new Move(i, newMove, 1)); // 1 = capture
+                        break;
+                    }
+                    else
+                        break;
+                }
+            }
+        }
+
+        #endregion
+
         #region Generate Moves
         public List<Move> GenerateMoves(int turn)
         {
@@ -666,6 +770,49 @@ namespace Fiasco
         public List<Move> GenerateMoves()
         {
             return GenerateMoves(this.Turn);
+        }
+
+        public List<Move> GenerateCaptures(int turn)
+        {
+            List<Move> moves = new List<Move>();
+
+            for (int i = 21; i < 99; i++)
+            {
+                if (_pieceArray[i] == Definitions.EMPTY || _pieceArray[i] == Definitions.OFF) continue;
+
+                if (_colourArray[i] == turn)
+                {
+                    switch (_pieceArray[i])
+                    {
+                        case Definitions.P:
+                            GeneratePawnCaptures(i, turn, ref moves);
+                            break;
+                        case Definitions.N:
+                            GenerateKnightCaptures(i, turn, ref moves);
+                            break;
+                        case Definitions.K:
+                            GenerateKingCaptures(i, turn, ref moves);
+                            break;
+                        case Definitions.B:
+                            GenerateBishopCaptures(i, turn, ref moves);
+                            break;
+                        case Definitions.R:
+                            GenerateRookCaptures(i, turn, ref moves);
+                            break;
+                        case Definitions.Q:
+                            GenerateBishopCaptures(i, turn, ref moves);
+                            GenerateRookCaptures(i, turn, ref moves);
+                            break;
+                    }
+                }
+            }
+
+            return moves;
+        }
+
+        public List<Move> GenerateCaptures()
+        {
+            return GenerateCaptures(this.Turn);
         }
         #endregion
 

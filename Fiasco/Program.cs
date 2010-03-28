@@ -27,9 +27,10 @@ namespace Fiasco
         {
             Console.Title = "Fiasco Chess Engine";
             Board board = new Board();
-            board.SetFen("rnbqkbn1/pppppppP/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+            board.SetFen("rnbqkbnq/pppppppP/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1");
 
-            Console.WriteLine(board.AddMoveNoBits(Definitions.StringToMove("h7g8q")));
+            //Console.WriteLine(board.AddMoveNoBits(Definitions.StringToMove("h7g8q")));
+            List<Move> moves = board.GenerateCaptures();
 
             //Engine.Search.Think(board, 5);
 
