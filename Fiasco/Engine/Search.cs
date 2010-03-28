@@ -23,7 +23,7 @@ namespace Fiasco.Engine
 {
     public class Search
     {
-        private static Dictionary<int, Move> _principleVariation = new Dictionary<int, Move>();
+        private static Move[] _principleVariation = new Move[64];
         private static int _ply = 0;        
         private static long _nodesSearched = 0;
 
@@ -111,10 +111,7 @@ namespace Fiasco.Engine
                 if (result > alpha)
                 {
                     alpha = result;
-                    if (_principleVariation.ContainsKey(_ply))
                         _principleVariation[_ply] = move;
-                    else
-                        _principleVariation.Add(_ply, move);
                 }
 
                 if (beta <= alpha)
@@ -126,7 +123,7 @@ namespace Fiasco.Engine
 
         public static Move Think(Board board, int depth)
         {
-            _principleVariation = new Dictionary<int, Move>();
+            _principleVariation = new Move[64];
             AlphaBeta(board, depth, -Eval.KVALUE, Eval.KVALUE, null);
             return _principleVariation[0];
         }
@@ -149,7 +146,7 @@ namespace Fiasco.Engine
             for (i = 1; ; i++)
             {
                 // Think
-                _principleVariation = new Dictionary<int, Move>();
+                _principleVariation = new Move[64];
                 if (i == 1)
                     score = AlphaBeta(board, i, -Eval.KVALUE, Eval.KVALUE, null);
                 else
@@ -160,12 +157,17 @@ namespace Fiasco.Engine
                 if (xboard)
                 {
                     string moveString = "";
-                    for (int j = 0; j < i - 1; j++)
+                    foreach(Move move in _principleVariation)
                     {
-                        if (!_principleVariation.ContainsKey(j))
+                        try
+                        {
+                            moveString += Definitions.MoveToString(move) + " ";
+                        }
+                        catch
+                        {
                             break;
-
-                        moveString += Definitions.MoveToString(_principleVariation[j]) + " ";
+                        }
+                    
                     }
                     
                     Console.WriteLine(i + " " + score + " " + (int)(elapsedTime.TotalMilliseconds / 10) + " " + _nodesSearched + " " + moveString);
