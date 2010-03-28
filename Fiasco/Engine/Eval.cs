@@ -146,18 +146,7 @@ namespace Fiasco.Engine
 
         #endregion
 
-
-        private static Dictionary<int, int> _pieceValues = new Dictionary<int, int>()
-        {
-            {Definitions.K, KVALUE},
-            {Definitions.Q, QVALUE},
-            {Definitions.R, RVALUE},
-            {Definitions.B, BVALUE},
-            {Definitions.N, NVALUE},
-            {Definitions.P, PVALUE},
-            {Definitions.OFF, 0},
-            {Definitions.EMPTY, 0}
-        };
+        private static int[] _pieceValues = new int[] { 0, PVALUE, BVALUE, NVALUE, RVALUE, QVALUE, KVALUE, 0 };
 
         #region Piece positioning
         public static int PieceValue(int piece)
@@ -167,6 +156,11 @@ namespace Fiasco.Engine
 
         private static int SumValues(Board board)
         {
+            if (board.WhiteKing == Definitions.EMPTY && board.BlackKing != Definitions.EMPTY)
+                return -Eval.KVALUE;
+            else if (board.BlackKing == Definitions.EMPTY && board.WhiteKing != Definitions.EMPTY)
+                return Eval.KVALUE;
+
             int score = 0, colour, maskIndex;
 
             for (int i = 21; i < 99; i++)

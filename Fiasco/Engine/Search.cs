@@ -177,7 +177,7 @@ namespace Fiasco.Engine
                 best = _principleVariation[0];
 
                 // 0.04 is approx. number_of_moves(depth n) / number_of_moves(depth n + 1)
-                if (elapsedTime.TotalMilliseconds > 0.2 * totalMilliseconds)
+                if (elapsedTime.TotalMilliseconds > 0.1 * totalMilliseconds)
                     break;
             }
 
