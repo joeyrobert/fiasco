@@ -54,6 +54,7 @@ namespace Fiasco
             FullMoveNumber = 1;
             HalfMoveClock = 0;
             Castling = 15;
+            EnPassantTarget = Definitions.NOENPASSANT;
             System.Array.Copy(Definitions.BlankArray, this._pieceArray, 120);
             System.Array.Copy(Definitions.BlankArray, this._colourArray, 120);
             InitializeZobrist();
