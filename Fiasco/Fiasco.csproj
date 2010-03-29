@@ -64,6 +64,7 @@
     <Compile Include="Engine\Search.cs" />
     <Compile Include="Square.cs" />
     <Compile Include="Transposition\Node.cs" />
+    <Compile Include="Transposition\HashValues.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

@@ -27,15 +27,15 @@ namespace Fiasco
         {
             Console.Title = "Fiasco Chess Engine";
             Board board = new Board();
-            board.SetFen("rnbqkbnq/pppppppP/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1");
 
-            //Console.WriteLine(board.AddMoveNoBits(Definitions.StringToMove("h7g8q")));
-            List<Move> moves = board.GenerateCaptures();
+            //board.AddMove(Engine.Search.Think(board, 6));
+            //board.AddMove(Engine.Search.Think(board, 6));
+            //board.AddMove(Engine.Search.Think(board, 6));
+            //board.AddMove(Engine.Search.Think(board, 6));
 
-            //Engine.Search.Think(board, 5);
+            Transposition.HashValues table = new Transposition.HashValues();
 
 
-            Console.Read();
         }
     }
 }
