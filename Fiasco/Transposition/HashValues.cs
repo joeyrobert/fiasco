@@ -21,7 +21,10 @@ namespace Fiasco.Transposition
         int[,] _pieceTable = new int[120, 12];
 
         /// <summary>
-        /// KQkq (white is in capitals)
+        /// 1 -> 0,
+        /// 2 -> 1,
+        /// 4 -> 2,
+        /// 8 -> 3
         /// </summary>
         int[] _castlingRights = new int[4];
 

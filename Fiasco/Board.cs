@@ -17,12 +17,14 @@
  */
 
 using System.Collections.Generic;
+using Fiasco.Transposition;
 
 namespace Fiasco
 {
     public class Board
     {
         #region Board Information
+
         private int[] _pieceArray = new int[120];
         private int[] _colourArray = new int[120];
 
@@ -33,11 +35,16 @@ namespace Fiasco
         private int _halfMoveClock;
         private int _fullMoveNumber;
 
+        // hashing information
+        private int _zobristHash = 0;
+        private HashValues _hashValues = new HashValues();
+
         // saves lookup time
         private int _whiteKing = 0, _blackKing = 0;
 
         private Stack<Square> _history = new Stack<Square>();
         private Book _book = new Book();
+
         #endregion
 
         #region Constructors and Destructor
@@ -49,6 +56,7 @@ namespace Fiasco
             Castling = 15;
             System.Array.Copy(Definitions.BlankArray, this._pieceArray, 120);
             System.Array.Copy(Definitions.BlankArray, this._colourArray, 120);
+            InitializeZobrist();
         }
 
         public Board(string fenBoard)
@@ -74,6 +82,8 @@ namespace Fiasco
             this.History = board.History;
             this.WhiteKing = board.WhiteKing;
             this.BlackKing = board.BlackKing;
+            this.ZobristHash = board.ZobristHash;
+            this.HashValues = board.HashValues;
         }
         #endregion
 
@@ -208,6 +218,30 @@ namespace Fiasco
                 _history = value;
             }
         }
+
+        public HashValues HashValues
+        {
+            get
+            {
+                return _hashValues;
+            }
+            set
+            {
+                _hashValues = value;
+            }
+        }
+
+        public int ZobristHash
+        {
+            get
+            {
+                return _zobristHash;
+            }
+            set
+            {
+                _zobristHash = value;
+            }
+        }
         #endregion
 
         #region Fen Methods
@@ -287,6 +321,8 @@ namespace Fiasco
 
             // Reload the king positions
             ReloadKings();
+
+            InitializeZobrist();
         }
         #endregion
 
@@ -1122,6 +1158,59 @@ namespace Fiasco
 
             return true;
         }
+        #endregion
+
+        #region Zobrist Hashing
+
+        public void InitializeZobrist()
+        {
+            int increment;
+
+            for (int i = 21; i < 99; i++)
+            {
+                if (_pieceArray[i] == Definitions.EMPTY || _pieceArray[i] == Definitions.OFF) continue;
+
+                // set increment connecting the piece table array and
+                // the piece values list (i.e. Definitions.K)
+                if (_colourArray[i] == Definitions.WHITE)
+                    increment = -1;
+                else
+                    increment = 5;
+
+                switch (_pieceArray[i])
+                {
+                    case Definitions.P:
+                        _zobristHash ^= _hashValues.PieceTable[i, Definitions.P + increment];
+                        break;
+                    case Definitions.N:
+                        _zobristHash ^= _hashValues.PieceTable[i, Definitions.N + increment];
+                        break;
+                    case Definitions.K:
+                        _zobristHash ^= _hashValues.PieceTable[i, Definitions.K + increment];
+                        break;
+                    case Definitions.B:
+                        _zobristHash ^= _hashValues.PieceTable[i, Definitions.B + increment];
+                        break;
+                    case Definitions.R:
+                        _zobristHash ^= _hashValues.PieceTable[i, Definitions.R + increment];
+                        break;
+                    case Definitions.Q:
+                        _zobristHash ^= _hashValues.PieceTable[i, Definitions.Q + increment];
+                        break;
+                }
+            }
+
+            if ((_castling & 1) != 0) _zobristHash ^= _hashValues.CastlingRights[0];
+            if ((_castling & 2) != 0) _zobristHash ^= _hashValues.CastlingRights[1];
+            if ((_castling & 4) != 0) _zobristHash ^= _hashValues.CastlingRights[2];
+            if ((_castling & 8) != 0) _zobristHash ^= _hashValues.CastlingRights[3];
+
+            if (_turn == Definitions.BLACK) _zobristHash ^= _hashValues.IfBlackIsPlaying;
+
+            if (_enPassantTarget != Definitions.NOENPASSANT)
+                _zobristHash ^= _hashValues.EnPassantFile[Definitions.GetColumn(_enPassantTarget) - 1];
+        }
+
         #endregion
     }
 }
