@@ -946,6 +946,8 @@ namespace Fiasco
                 MovePiece(move.From, move.To);
 
                 // Delete the en passant target square
+                _zobristHash ^= _hashValues.PieceValue(_enPassantTarget - Turn * 10, _colourArray[_enPassantTarget - Turn * 10], _pieceArray[_enPassantTarget - Turn * 10]);
+
                 _pieceArray[_enPassantTarget - Turn * 10] = Definitions.EMPTY;
                 _colourArray[_enPassantTarget - Turn * 10] = Definitions.EMPTY;
                 SetEnPassant();
