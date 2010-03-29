@@ -1166,40 +1166,11 @@ namespace Fiasco
         public void InitializeZobrist()
         {
             _zobristHash = 0;
-            int increment;
 
             for (int i = 21; i < 99; i++)
             {
                 if (_pieceArray[i] == Definitions.EMPTY || _pieceArray[i] == Definitions.OFF) continue;
-
-                // set increment connecting the piece table array and
-                // the piece values list (i.e. Definitions.K)
-                if (_colourArray[i] == Definitions.WHITE)
-                    increment = -1;
-                else
-                    increment = 5;
-
-                switch (_pieceArray[i])
-                {
-                    case Definitions.P:
-                        _zobristHash ^= _hashValues.PieceTable[i, Definitions.P + increment];
-                        break;
-                    case Definitions.N:
-                        _zobristHash ^= _hashValues.PieceTable[i, Definitions.N + increment];
-                        break;
-                    case Definitions.K:
-                        _zobristHash ^= _hashValues.PieceTable[i, Definitions.K + increment];
-                        break;
-                    case Definitions.B:
-                        _zobristHash ^= _hashValues.PieceTable[i, Definitions.B + increment];
-                        break;
-                    case Definitions.R:
-                        _zobristHash ^= _hashValues.PieceTable[i, Definitions.R + increment];
-                        break;
-                    case Definitions.Q:
-                        _zobristHash ^= _hashValues.PieceTable[i, Definitions.Q + increment];
-                        break;
-                }
+                _zobristHash ^= _hashValues.PieceValue(i, _colourArray[i], _pieceArray[i]);
             }
 
             if ((_castling & 1) != 0) _zobristHash ^= _hashValues.CastlingRights[0];
