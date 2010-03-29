@@ -868,10 +868,19 @@ namespace Fiasco
         /// <param name="from">from index</param>
         /// <param name="to">to index</param>
         private void MovePiece(int from, int to)
-        {                
+        {
+            // Delete old pieces
+            _zobristHash ^= _hashValues.PieceValue(from, _colourArray[from], _pieceArray[from]);
+
+            if (_pieceArray[to] != Definitions.EMPTY)
+                _zobristHash ^= _hashValues.PieceValue(to, _colourArray[to], _pieceArray[to]);
+
             // Move the piece
             _pieceArray[to] = _pieceArray[from];
             _colourArray[to] = _colourArray[from];
+
+            // Add new piece
+            _zobristHash ^= _hashValues.PieceValue(to, _colourArray[to], _pieceArray[to]);
 
             // Delete the original piece
             _pieceArray[from] = Definitions.EMPTY;
@@ -929,7 +938,7 @@ namespace Fiasco
 			if (move.Bits == 0)
 			{
                 MovePiece(move.From, move.To);
-                _enPassantTarget = Definitions.NOENPASSANT;
+                SetEnPassant();
             }
             // EN PASSANT
             else if ((move.Bits & 4) != 0)
@@ -939,7 +948,7 @@ namespace Fiasco
                 // Delete the en passant target square
                 _pieceArray[_enPassantTarget - Turn * 10] = Definitions.EMPTY;
                 _colourArray[_enPassantTarget - Turn * 10] = Definitions.EMPTY;
-                _enPassantTarget = Definitions.NOENPASSANT;
+                SetEnPassant();
             }
             // CAPTURE (todo: implement 50 move rule)
             else if ((move.Bits & 1) != 0)
@@ -958,19 +967,19 @@ namespace Fiasco
                 }
 
                 MovePiece(move.From, move.To);
-                _enPassantTarget = Definitions.NOENPASSANT;
+                SetEnPassant();
             }
             // DOUBLE PAWN PUSH (todo: implement 50 move rule)
             else if ((move.Bits & 8) != 0)
             {
                 MovePiece(move.From, move.To);
-                _enPassantTarget = move.From + (10 * Turn);
+                SetEnPassant(move.From + (10 * Turn));
             }
             // PAWN PUSH (todo: implement 50 move rule)
             else if ((move.Bits & 16) != 0)
             {
                 MovePiece(move.From, move.To);
-                _enPassantTarget = Definitions.NOENPASSANT;
+                SetEnPassant();
             }
             // CASTLING MOVE
             else if ((move.Bits & 2) != 0)
@@ -995,7 +1004,7 @@ namespace Fiasco
                         break;
                 }
 
-                _enPassantTarget = Definitions.NOENPASSANT;
+                SetEnPassant();
             }
 
             // PROMOTION (todo: implement 50 move rule)
@@ -1003,7 +1012,9 @@ namespace Fiasco
             {
                 // Everything else should be taken care of by this point.
                 // Just overwrite the underlying piece.
+                _zobristHash ^= _hashValues.PieceValue(move.To, _colourArray[move.To], _pieceArray[move.To]);
                 _pieceArray[move.To] = move.Promote;
+                _zobristHash ^= _hashValues.PieceValue(move.To, _colourArray[move.To], _pieceArray[move.To]);
             }
 
             // POST MOVE
@@ -1014,27 +1025,56 @@ namespace Fiasco
                 if (Turn == Definitions.WHITE)
                 {
                     // remove white's ability to castle
-                    if ((_castling & 1) != 0) _castling = _castling - 1;
-                    if ((_castling & 2) != 0) _castling = _castling - 2;
+                    if ((_castling & 1) != 0)
+                    {
+                        _zobristHash ^= _hashValues.CastlingRights[0];
+                        _castling = _castling - 1;
+                    }
+                    if ((_castling & 2) != 0)
+                    {
+                        _zobristHash ^= _hashValues.CastlingRights[1];
+                        _castling = _castling - 2;
+                    }
                     this.WhiteKing = move.To;
                 }
                 else
                 {
                     // remove black's ability to castle
-                    if ((_castling & 4) != 0) _castling = _castling - 4;
-                    if ((_castling & 8) != 0) _castling = _castling - 8;
+                    if ((_castling & 4) != 0)
+                    {
+                        _zobristHash ^= _hashValues.CastlingRights[2];
+                        _castling = _castling - 4;
+                    }
+                    if ((_castling & 8) != 0)
+                    {
+                        _zobristHash ^= _hashValues.CastlingRights[3];
+                        _castling = _castling - 8;
+                    }
                     this.BlackKing = move.To;
                 }
             }
 
             if ((move.From == 28 || move.To == 28) && (_castling & 1) != 0)
+            {
+                _zobristHash ^= _hashValues.CastlingRights[0];
                 _castling -= 1;
+            }
             else if ((move.From == 21 || move.To == 21) && (_castling & 2) != 0)
+            {
+                _zobristHash ^= _hashValues.CastlingRights[1];
                 _castling -= 2;
+            }
             else if ((move.From == 98 || move.To == 98) && (_castling & 4) != 0)
+            {
+                _zobristHash ^= _hashValues.CastlingRights[2];
                 _castling -= 4;
+            }
             else if ((move.From == 91 || move.To == 91) && (_castling & 8) != 0)
+            {
+                _zobristHash ^= _hashValues.CastlingRights[3];
                 _castling -= 8;
+            }
+
             #endregion
 
             // Increment the full move number after black
@@ -1043,6 +1083,7 @@ namespace Fiasco
 
             // Switch the active turn
             Turn = -1 * Turn;
+            _zobristHash ^= _hashValues.IfBlackIsPlaying;
 
             // If the board is in check, subtract the move
             if (IsInCheck(-1 * Turn))
@@ -1183,6 +1224,20 @@ namespace Fiasco
 
             if (_enPassantTarget != Definitions.NOENPASSANT)
                 _zobristHash ^= _hashValues.EnPassantFile[Definitions.GetColumn(_enPassantTarget) - 1];
+        }
+
+        private void SetEnPassant()
+        {
+            SetEnPassant(Definitions.NOENPASSANT);
+        }
+
+        private void SetEnPassant(int enPassantValue)
+        {
+            // Undo any existing en passant
+            if (_enPassantTarget != Definitions.NOENPASSANT)
+                _zobristHash ^= _hashValues.EnPassantFile[Definitions.GetColumn(_enPassantTarget) - 1];
+
+            _enPassantTarget = enPassantValue;
         }
 
         #endregion
