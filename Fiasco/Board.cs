@@ -1165,6 +1165,7 @@ namespace Fiasco
 
         public void InitializeZobrist()
         {
+            _zobristHash = 0;
             int increment;
 
             for (int i = 21; i < 99; i++)
