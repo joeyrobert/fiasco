@@ -923,7 +923,7 @@ namespace Fiasco
         public bool AddMove(Move move)
 		{
             // Add the piece that was there to the move stack
-            _history.Push(new Square(move, _pieceArray[move.To], _colourArray[move.To], _enPassantTarget, _castling));
+            _history.Push(new Square(move, _pieceArray[move.To], _colourArray[move.To], _enPassantTarget, _castling, _zobristHash));
 
             // ORDINARY MOVE
 			if (move.Bits == 0)
@@ -1145,8 +1145,9 @@ namespace Fiasco
                 _pieceArray[square.Move.From] = Definitions.P;
             }
 
-            // Put the old en passant square back
+            // Put the old en passant square and zobrist hash back
             _enPassantTarget = square.EnPassantTarget;
+            _zobristHash = square.ZobristHash;
 
             // Since the king has been moved back, check the 'from' square
             if (_pieceArray[square.Move.From] == Definitions.K)

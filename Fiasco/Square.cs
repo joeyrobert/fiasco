@@ -27,15 +27,17 @@ namespace Fiasco
         public int Colour;
         public int EnPassantTarget; // en passant needs to be restored
         public int Castling;
+        public int ZobristHash;
         public Move Move;
 
-        public Square(Move move, int piece, int colour, int enpassanttarget, int castling)
+        public Square(Move move, int piece, int colour, int enPassantTarget, int castling, int zobristHash)
         {
-            EnPassantTarget = enpassanttarget;
+            EnPassantTarget = enPassantTarget;
             Piece = piece;
             Colour = colour;
             Move = move;
             Castling = castling;
+            ZobristHash = zobristHash;
         }
     }
 }

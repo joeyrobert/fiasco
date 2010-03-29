@@ -34,9 +34,6 @@ namespace Fiasco
             //board.AddMove(Engine.Search.Think(board, 6));
             //board.AddMove(Engine.Search.Think(board, 6));
 
-            Transposition.HashValues table = new Transposition.HashValues();
-            board.HashValues = table;
-
 
         }
     }
