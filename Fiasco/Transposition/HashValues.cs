@@ -7,11 +7,13 @@ namespace Fiasco.Transposition
     {
         #region Random number definitions
 
+        int _randomSeed = 1;
+
         /// <summary>
         /// Intentionally not seeded. Hash table can contain 2^N piece,
         /// where N is the number of bits in the random number.
         /// </summary>
-        Random _random = new Random();
+        Random _random;
 
         /// <summary>
         /// WHITE: 0 - 5, BLACK: 6 - 11
@@ -44,13 +46,12 @@ namespace Fiasco.Transposition
 
         public HashValues()
         {
+            _random = new Random(_randomSeed);
             SeedTable();
         }
 
         private void SeedTable()
         {
-            _random = new Random();
-
             // Side to move
             _ifBlackIsPlaying = _random.Next();
 
