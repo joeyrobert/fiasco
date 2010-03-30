@@ -62,6 +62,8 @@ namespace Fiasco
 
         public Board(string fenBoard)
         {
+            System.Array.Copy(Definitions.BlankArray, this._pieceArray, 120);
+            System.Array.Copy(Definitions.BlankArray, this._colourArray, 120);
             SetFen(fenBoard);
         }
 
@@ -328,6 +330,16 @@ namespace Fiasco
         #endregion
 
         #region IsSquareAttacked
+        private bool BishopAttackable(int from, int to)
+        {
+            return (Definitions.BishopAttackArray[from] & (((ulong)1) << (to % 10 - 1) * 8 + (to / 10) - 2)) != 0;
+        }
+
+        private bool RookAttackable(int from, int to)
+        {
+            return (Definitions.RookAttackArray[from] & (((ulong)1) << (to % 10 - 1) * 8 + (to / 10) - 2)) != 0;
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -346,16 +358,11 @@ namespace Fiasco
                 {
                     // if you are not an off limits piece or my own piece, keep going
                     if (_pieceArray[newMove] != Definitions.OFF && _colourArray[newMove] == Definitions.EMPTY)
-                    {
-                    }
+                        newMove += delta;
                     else if ((_pieceArray[newMove] == Definitions.B || _pieceArray[newMove] == Definitions.Q) && _colourArray[newMove] == -1 * turn)
-                    {
                         return true;
-                    }
                     else
-                        break; // you must be or off limits or my own/another piece. stop loop.    
-
-                    newMove += delta;
+                        break; // you must be or off limits or my own/another piece. stop loop.
                 }
             }
             #endregion
@@ -368,16 +375,11 @@ namespace Fiasco
                 {
                     // if you are not an off limits piece or my own piece, keep going
                     if (_pieceArray[newMove] != Definitions.OFF && _colourArray[newMove] == Definitions.EMPTY)
-                    {
-                    }
+                        newMove += delta;
                     else if ((_pieceArray[newMove] == Definitions.R || _pieceArray[newMove] == Definitions.Q) && _colourArray[newMove] == -1 * turn)
-                    {
                         return true;
-                    }
                     else
-                        break; // you must be or off limits or my own/another piece. stop loop.    
-
-                    newMove += delta;
+                        break; // you must be or off limits or my own/another piece. stop loop.
                 }
             }
             #endregion
@@ -427,10 +429,15 @@ namespace Fiasco
         /// <returns>true if that side is in check</returns>
         public bool IsInCheck(int turn)
         {
-            if (turn == Definitions.WHITE)
-                return IsAttacked(this.WhiteKing, turn);
-            else
-                return IsAttacked(this.BlackKing, turn);
+            switch (turn)
+            {
+                case Definitions.WHITE:
+                    return IsAttacked(this.WhiteKing, turn);
+                case Definitions.BLACK:
+                    return IsAttacked(this.BlackKing, turn);
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -618,6 +625,8 @@ namespace Fiasco
 
         private void GenerateCastle(int turn, ref List<Move> moves)
         {
+            if (_castling == 0) return;
+
             // can't castle out of check
             if (IsInCheck(turn)) return;
 
@@ -767,7 +776,7 @@ namespace Fiasco
         #region Generate Moves
         public List<Move> GenerateMoves(int turn)
         {
-            List<Move> moves = new List<Move>();
+            List<Move> moves = new List<Move>(40);
 
             for (int i = 21; i < 99; i++)
             {
@@ -1241,7 +1250,8 @@ namespace Fiasco
 
         private void SetEnPassant()
         {
-            SetEnPassant(Definitions.NOENPASSANT);
+            if (_enPassantTarget != Definitions.NOENPASSANT)
+                SetEnPassant(Definitions.NOENPASSANT);
         }
 
         private void SetEnPassant(int enPassantValue)

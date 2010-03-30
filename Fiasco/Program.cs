@@ -26,15 +26,16 @@ namespace Fiasco
         static void Main(string[] args)
         {
             Console.Title = "Fiasco Chess Engine";
+
             Board board = new Board();
             board.SetFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+            
 
             //board.AddMove(Engine.Search.Think(board, 6));
             //board.AddMove(Engine.Search.Think(board, 6));
             //board.AddMove(Engine.Search.Think(board, 6));
             //board.AddMove(Engine.Search.Think(board, 6));
-
-
+            Engine.Perft.Minimax(board, 6);
         }
     }
 }

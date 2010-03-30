@@ -75,16 +75,15 @@ namespace Fiasco.Transposition
 
         public int PieceValue(int index, int turn, int pieceType)
         {
-            int increment;
-
             // set increment connecting the piece table array and
             // the piece values list (i.e. Definitions.K)
-            if (turn == Definitions.WHITE)
-                increment = -1;
-            else
-                increment = 5;
-
-            return _pieceTable[index, pieceType + increment];
+            switch (turn)
+            {
+                case Definitions.WHITE:
+                    return _pieceTable[index, pieceType - 1];
+                default:
+                    return _pieceTable[index, pieceType + 5];
+            }
         }
 
         #region Properties
