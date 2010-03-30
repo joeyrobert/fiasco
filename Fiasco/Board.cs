@@ -867,7 +867,7 @@ namespace Fiasco
         /// </summary>
         /// <param name="from">from index</param>
         /// <param name="to">to index</param>
-        private void MovePiece(int from, int to)
+        private void MovePieceWithZobrist(int from, int to)
         {
             // Delete old pieces
             _zobristHash ^= _hashValues.PieceValue(from, _colourArray[from], _pieceArray[from]);
@@ -881,6 +881,17 @@ namespace Fiasco
 
             // Add new piece
             _zobristHash ^= _hashValues.PieceValue(to, _colourArray[to], _pieceArray[to]);
+
+            // Delete the original piece
+            _pieceArray[from] = Definitions.EMPTY;
+            _colourArray[from] = Definitions.EMPTY;
+        }
+
+        private void MovePiece(int from, int to)
+        {
+            // Move the piece
+            _pieceArray[to] = _pieceArray[from];
+            _colourArray[to] = _colourArray[from];
 
             // Delete the original piece
             _pieceArray[from] = Definitions.EMPTY;
@@ -937,13 +948,13 @@ namespace Fiasco
             // ORDINARY MOVE
 			if (move.Bits == 0)
 			{
-                MovePiece(move.From, move.To);
+                MovePieceWithZobrist(move.From, move.To);
                 SetEnPassant();
             }
             // EN PASSANT
             else if ((move.Bits & 4) != 0)
             {
-                MovePiece(move.From, move.To);
+                MovePieceWithZobrist(move.From, move.To);
 
                 // Delete the en passant target square
                 _zobristHash ^= _hashValues.PieceValue(_enPassantTarget - Turn * 10, _colourArray[_enPassantTarget - Turn * 10], _pieceArray[_enPassantTarget - Turn * 10]);
@@ -968,41 +979,41 @@ namespace Fiasco
                     }
                 }
 
-                MovePiece(move.From, move.To);
+                MovePieceWithZobrist(move.From, move.To);
                 SetEnPassant();
             }
             // DOUBLE PAWN PUSH (todo: implement 50 move rule)
             else if ((move.Bits & 8) != 0)
             {
-                MovePiece(move.From, move.To);
+                MovePieceWithZobrist(move.From, move.To);
                 SetEnPassant(move.From + (10 * Turn));
             }
             // PAWN PUSH (todo: implement 50 move rule)
             else if ((move.Bits & 16) != 0)
             {
-                MovePiece(move.From, move.To);
+                MovePieceWithZobrist(move.From, move.To);
                 SetEnPassant();
             }
             // CASTLING MOVE
             else if ((move.Bits & 2) != 0)
             {
                 // move the king
-                MovePiece(move.From, move.To);
+                MovePieceWithZobrist(move.From, move.To);
 
                 // figure out which rook to move
                 switch (move.To)
                 {
                     case 27: // white king side
-                        MovePiece(28, 26); // right rook
+                        MovePieceWithZobrist(28, 26); // right rook
                         break;
                     case 23: // white queen side
-                        MovePiece(21, 24); // left rook
+                        MovePieceWithZobrist(21, 24); // left rook
                         break;
                     case 97: // black king side
-                        MovePiece(98, 96); // right rook
+                        MovePieceWithZobrist(98, 96); // right rook
                         break;
                     case 93:  // black queen size
-                        MovePiece(91, 94); // left rook
+                        MovePieceWithZobrist(91, 94); // left rook
                         break;
                 }
 
