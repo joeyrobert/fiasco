@@ -1,10 +1,14 @@
 ﻿namespace Fiasco.Transposition
 {
-    struct Node
+    public struct Node
     {
         int Score;
         int Depth;
-        Move BestMove;
-        long AgeInTicks;
+
+        public Node(int score, int depth)
+        {
+            Score = score;
+            Depth = depth;
+        }
     }
 }

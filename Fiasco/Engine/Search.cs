@@ -27,6 +27,7 @@ namespace Fiasco.Engine
         private static int _ply = 0;        
         private static long _nodesSearched = 0;
         private static Random _random = new Random((int)(DateTime.Now.Ticks % 1000000));
+        private static Dictionary<int, Transposition.Node> _transTable = new Dictionary<int, Fiasco.Transposition.Node>();
 
         #region Core search methods
 
@@ -71,7 +72,9 @@ namespace Fiasco.Engine
             if (depth == 0 || board.WhiteKing == Definitions.EMPTY || board.BlackKing == Definitions.EMPTY)
             {
                 _nodesSearched++;
-                return Quiescence(board, alpha, beta);
+                int resultant = Quiescence(board, alpha, beta);
+                //_transTable[board.ZobristHash] = new Transposition.Node(resultant, _ply);
+                return resultant;
             }
 
             List<Move> moveList = board.GenerateMoves();
