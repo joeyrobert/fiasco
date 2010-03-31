@@ -24,6 +24,7 @@ namespace Fiasco
     public static class Definitions
     {
         #region Constants
+
         // Piece values
         public const int P = 1;
         public const int B = 2;
@@ -43,6 +44,8 @@ namespace Fiasco
 
         public const bool ALLOWRANDOM = false;
         public const bool NULLMOVEALLOWED = true;
+        public const int TRANSSIZE = 1024 * 1024;
+
         #endregion
 
         #region Default Board Setups

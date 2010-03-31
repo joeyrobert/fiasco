@@ -29,13 +29,13 @@ namespace Fiasco
 
             Board board = new Board();
             board.SetFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
-            
+            Transposition.Node[] transTable = new Transposition.Node[Definitions.TRANSSIZE];
 
             //board.AddMove(Engine.Search.Think(board, 6));
             //board.AddMove(Engine.Search.Think(board, 6));
             //board.AddMove(Engine.Search.Think(board, 6));
             //board.AddMove(Engine.Search.Think(board, 6));
-            Engine.Perft.Minimax(board, 6);
+            //Engine.Perft.Minimax(board, 6);
         }
     }
 }

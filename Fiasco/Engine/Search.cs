@@ -27,7 +27,7 @@ namespace Fiasco.Engine
         private static int _ply = 0;        
         private static long _nodesSearched = 0;
         private static Random _random = new Random((int)(DateTime.Now.Ticks % 1000000));
-        private static Dictionary<int, Transposition.Node> _transTable = new Dictionary<int, Fiasco.Transposition.Node>();
+        private static Transposition.Node[] _transTable = new Transposition.Node[Definitions.TRANSSIZE];
 
         #region Core search methods
 
