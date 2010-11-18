@@ -17,6 +17,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using Fiasco;
 using Fiasco.Engine;
 using NUnit.Framework;
@@ -27,137 +28,45 @@ namespace Fiasco.Tests
     public class Perft
     {
         Board board;
+        // For FEN board which have already failed, presumably at a
+        // lower depth. This assumes that this FEN board is dedicated
+        // to this process/thread.
+        List<string> skipFen = new List<string>();
 
         [SetUp()]
         public void Init()
         {
             board = new Board();
-            board.SetFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
         }
 
-        #region Initial Board
-        [Test()]
-        public void Initial_Perft4()
+        [Test, TestCaseSource("PerftReader")]
+        public void PerftRunner(string fenBoard, int depth, ulong expected)
         {
-            ulong perft = Engine.Perft.Minimax(board, 4);
-            Assert.AreEqual(197281, perft);
+            if (skipFen.Contains(fenBoard))
+                Assert.Fail("  FEN board failed at a lower level");
+            board.SetFen(fenBoard);
+            ulong perft = Engine.Perft.Minimax(board, depth);
+            if (expected != perft) skipFen.Add(fenBoard);
+            Assert.AreEqual(expected, perft);
         }
 
-        [Test()]
-        public void Initial_Perft5()
+        public static List<object> PerftReader()
         {
-            ulong perft = Engine.Perft.Minimax(board, 5);
-            Assert.AreEqual(4865609, perft);
+            List<object> results = new List<object>();
+            string[] lines = System.IO.File.ReadAllLines("TestSuites/perftsuite.epd");
+            foreach (string line in lines)
+            {
+                string[] parts = line.Split(';');
+                string fen = parts[0].Trim();
+                for (int i = 1; i < parts.Length; i++)
+                {
+                    string[] parameters = parts[i].Split(' ');
+                    int depth = int.Parse(parameters[0].Substring(1));
+                    ulong expected = ulong.Parse(parameters[1]);
+                    results.Add(new object[] { fen, depth, expected });
+                }
+            }
+            return results;
         }
-
-        [Test()]
-        public void Initial_Perft6()
-        {
-            ulong perft = Engine.Perft.Minimax(board, 6);
-            Assert.AreEqual(119060324, perft);
-        }
-        #endregion
-
-        #region Position 2
-        [Test()]
-        public void Position2_Perft3()
-        {
-            board.SetFen("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1");
-            ulong perft = Engine.Perft.Minimax(board, 3);
-            Assert.AreEqual(97862, perft);
-        }
-
-        [Test()]
-        public void Position2_Perft4()
-        {
-            board.SetFen("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1");
-            ulong perft = Engine.Perft.Minimax(board, 4);
-            Assert.AreEqual(4085603, perft);
-        }
-        #endregion
-
-        #region Position 3
-        [Test()]
-        public void Position3_Perft4()
-        {
-            board.SetFen("8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - - 0 1");
-            ulong perft = Engine.Perft.Minimax(board, 4);
-            Assert.AreEqual(43238, perft);
-        }
-
-        [Test()]
-        public void Position3_Perft5()
-        {
-            board.SetFen("8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - - 0 1");
-            ulong perft = Engine.Perft.Minimax(board, 5);
-            Assert.AreEqual(674624, perft);
-        }
-
-        [Test()]
-        public void Position3_Perft6()
-        {
-            board.SetFen("8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - - 0 1");
-            ulong perft = Engine.Perft.Minimax(board, 6);
-            Assert.AreEqual(11030083, perft);
-        }
-        #endregion
-
-        #region Position 4
-        [Test()]
-        public void Position4_Perft5()
-        {
-            board.SetFen("rnbqkb1r/ppppp1pp/7n/4Pp2/8/8/PPPP1PPP/RNBQKBNR w KQkq f6 0 3");
-            ulong perft = Engine.Perft.Minimax(board, 5);
-            Assert.AreEqual(11139762, perft);
-        }
-        #endregion
-
-        #region Position 5
-        [Test()]
-        public void Position5_Perft1()
-        {
-            board.SetFen("8/3K4/2p5/p2b2r1/5k2/8/8/1q6 b - - 1 67");
-            ulong perft = Engine.Perft.Minimax(board, 1);
-            Assert.AreEqual(50, perft);
-        }
-
-        [Test()]
-        public void Position5_Perft2()
-        {
-            board.SetFen("8/3K4/2p5/p2b2r1/5k2/8/8/1q6 b - - 1 67");
-            ulong perft = Engine.Perft.Minimax(board, 2);
-            Assert.AreEqual(279, perft);
-        }        
-        #endregion
-
-        #region Position 6
-        [Test()]
-        public void Position6_Perft1()
-        {
-            board.SetFen("1r1qk2r/5ppp/Q2p4/6R1/4P1bq/2N5/P1P5/4K1N1 b k - 0 23");
-            ulong perft = Engine.Perft.Minimax(board, 1);
-            Assert.AreEqual(47, perft);
-        }
-        #endregion
-
-        #region Position 7
-        [Test()]
-        public void Position7_Perft6()
-        {
-            board.SetFen("8/7p/p5pb/4k3/P1pPn3/8/P5PP/1rB2RK1 b - d3 0 28");
-            ulong perft = Engine.Perft.Minimax(board, 6);
-            Assert.AreEqual(38633283, perft);
-        }
-        #endregion
-
-        #region Check cases
-        [Test()]
-        public void RemoveIfInCheck()
-        {
-            board.SetFen("rnb1kbnr/3p1Qpp/1q6/1B2N3/3PPB2/2P5/PP3PPP/R4RK1 b k - 0 16");
-            ulong perft = Engine.Perft.Minimax(board, 1);
-            Assert.AreEqual(1, perft);
-        }
-        #endregion
     }
 }
