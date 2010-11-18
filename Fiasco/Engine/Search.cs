@@ -31,41 +31,6 @@ namespace Fiasco.Engine
 
         #region Core search methods
 
-        public static Pair Minimax(Board board, int depth)
-        {
-            Move tmpMove = new Move();
-
-            if (depth == 0)
-                return new Pair(Eval.Board(board), tmpMove);
-
-            List<Move> moveList = board.GenerateMoves();
-            Pair best = new Pair();
-
-            foreach (Move move in moveList)
-            {
-                if (!board.AddMove(move)) continue;
-
-                Pair children = Minimax(board, depth - 1);
-                int value = -1 * children.Score;
-
-                board.SubtractMove();
-
-                if(!best.Set || value > best.Score) {
-                    best.Move = move;
-                    best.Score = value;
-                    best.Set = true;
-                }
-                // if two moves are equivalent, randomly choose one.
-                else if (value == best.Score && Definitions.ALLOWRANDOM && RandomBool())
-                {
-                    best.Move = move;
-                    best.Score = value;
-                }
-            }
-
-            return best;
-        }
-
         public static int AlphaBeta(Board board, int depth, int alpha, int beta, Move? bestMove)
         {
             // Check for end of search or terminal node
