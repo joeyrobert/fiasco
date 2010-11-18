@@ -432,9 +432,9 @@ namespace Fiasco
             switch (turn)
             {
                 case Definitions.WHITE:
-                    return IsAttacked(this.WhiteKing, turn);
+                    return IsAttacked(_whiteKing, turn);
                 case Definitions.BLACK:
-                    return IsAttacked(this.BlackKing, turn);
+                    return IsAttacked(_blackKing, turn);
             }
 
             return false;
@@ -462,8 +462,8 @@ namespace Fiasco
                     break;
             }
 
-            this.WhiteKing = whiteKing;
-            this.BlackKing = blackKing;
+            _whiteKing = whiteKing;
+            _blackKing = blackKing;
         }
         #endregion
 
@@ -487,7 +487,7 @@ namespace Fiasco
             if (_pieceArray[newMove] == Definitions.EMPTY)
             {
                 if (column == lastRank)
-                    GeneratePromotions(i, newMove, 16, moves);
+                    GeneratePromotions(i, newMove, 16, ref moves);
                 else
                     moves.Add(new Move(i, newMove, 16)); // 16 = pawn move
             }
@@ -496,10 +496,7 @@ namespace Fiasco
             newMove = i + turn * 20;
             int firstRank;
 
-            if (turn == Definitions.WHITE)
-                firstRank = 2;
-            else
-                firstRank = 7;
+            firstRank = turn == Definitions.WHITE ? 2 : 7;
 
             if (_pieceArray[newMove] == Definitions.EMPTY && _pieceArray[(i + turn * 10)] == Definitions.EMPTY && Definitions.GetRow(i) == firstRank)
                 moves.Add(new Move(i, newMove, 24)); // 24 = pawn move + double pawn push
@@ -511,7 +508,7 @@ namespace Fiasco
             if (_colourArray[newMove] == -1 * turn)
             {
                 if (column == lastRank)
-                    GeneratePromotions(i, newMove, 17, moves);
+                    GeneratePromotions(i, newMove, 17, ref moves);
                 else
                     moves.Add(new Move(i, newMove, 17)); // 17 = pawn move + capture
             }
@@ -522,7 +519,7 @@ namespace Fiasco
             if (_colourArray[newMove] == -1 * turn)
             {
                 if (column == lastRank)
-                    GeneratePromotions(i, newMove, 17, moves);
+                    GeneratePromotions(i, newMove, 17, ref moves);
                 else
                     moves.Add(new Move(i, newMove, 17)); // 17 = pawn move + capture
             }
@@ -537,7 +534,7 @@ namespace Fiasco
                 moves.Add(new Move(i, newMove, 21));
         }
 
-        private void GeneratePromotions(int from, int to, int bits, List<Move> moves)
+        private void GeneratePromotions(int from, int to, int bits, ref List<Move> moves)
         {
             moves.Add(new Move(from, to, bits + 32, Definitions.N));
             moves.Add(new Move(from, to, bits + 32, Definitions.B));
@@ -632,14 +629,14 @@ namespace Fiasco
 
             if (turn == Definitions.WHITE)
             {
-                if ((Castling & 1) != 0 
+                if ((_castling & 1) != 0 
                     && _pieceArray[26] == Definitions.EMPTY
                     && _pieceArray[27] == Definitions.EMPTY
                     && !IsAttacked(26, turn)
                     && !IsAttacked(27, turn))
                     moves.Add(new Move(25, 27, 2));
 
-                if ((Castling & 2) != 0
+                if ((_castling & 2) != 0
                     && _pieceArray[22] == Definitions.EMPTY
                     && _pieceArray[23] == Definitions.EMPTY
                     && _pieceArray[24] == Definitions.EMPTY
@@ -650,14 +647,14 @@ namespace Fiasco
             }
             else
             {
-                if ((Castling & 4) != 0
+                if ((_castling & 4) != 0
                     && _pieceArray[96] == Definitions.EMPTY
                     && _pieceArray[97] == Definitions.EMPTY
                     && !IsAttacked(96, turn)
                     && !IsAttacked(97, turn))
                     moves.Add(new Move(95, 97, 2));
 
-                if ((Castling & 8) != 0
+                if ((_castling & 8) != 0
                     && _pieceArray[92] == Definitions.EMPTY
                     && _pieceArray[93] == Definitions.EMPTY
                     && _pieceArray[94] == Definitions.EMPTY
@@ -686,7 +683,7 @@ namespace Fiasco
             if (_colourArray[newMove] == -1 * turn)
             {
                 if (column == lastRank)
-                    GeneratePromotions(i, newMove, 17, moves);
+                    GeneratePromotions(i, newMove, 17, ref moves);
                 else
                     moves.Add(new Move(i, newMove, 17)); // 17 = pawn move + capture
             }
@@ -697,7 +694,7 @@ namespace Fiasco
             if (_colourArray[newMove] == -1 * turn)
             {
                 if (column == lastRank)
-                    GeneratePromotions(i, newMove, 17, moves);
+                    GeneratePromotions(i, newMove, 17, ref moves);
                 else
                     moves.Add(new Move(i, newMove, 17)); // 17 = pawn move + capture
             }
@@ -815,7 +812,7 @@ namespace Fiasco
 
         public List<Move> GenerateMoves()
         {
-            return GenerateMoves(this.Turn);
+            return GenerateMoves(_turn);
         }
 
         public List<Move> GenerateCaptures(int turn)
@@ -866,7 +863,7 @@ namespace Fiasco
 
         public List<Move> GenerateCaptures()
         {
-            return GenerateCaptures(this.Turn);
+            return GenerateCaptures(_turn);
         }
         #endregion
 
@@ -966,10 +963,10 @@ namespace Fiasco
                 MovePieceWithZobrist(move.From, move.To);
 
                 // Delete the en passant target square
-                _zobristHash ^= _hashValues.PieceValue(_enPassantTarget - Turn * 10, _colourArray[_enPassantTarget - Turn * 10], _pieceArray[_enPassantTarget - Turn * 10]);
+                _zobristHash ^= _hashValues.PieceValue(_enPassantTarget - _turn * 10, _colourArray[_enPassantTarget - _turn * 10], _pieceArray[_enPassantTarget - _turn * 10]);
 
-                _pieceArray[_enPassantTarget - Turn * 10] = Definitions.EMPTY;
-                _colourArray[_enPassantTarget - Turn * 10] = Definitions.EMPTY;
+                _pieceArray[_enPassantTarget - _turn * 10] = Definitions.EMPTY;
+                _colourArray[_enPassantTarget - _turn * 10] = Definitions.EMPTY;
                 SetEnPassant();
             }
             // CAPTURE (todo: implement 50 move rule)
@@ -995,7 +992,7 @@ namespace Fiasco
             else if ((move.Bits & 8) != 0)
             {
                 MovePieceWithZobrist(move.From, move.To);
-                SetEnPassant(move.From + (10 * Turn));
+                SetEnPassant(move.From + (10 * _turn));
             }
             // PAWN PUSH (todo: implement 50 move rule)
             else if ((move.Bits & 16) != 0)
@@ -1044,7 +1041,7 @@ namespace Fiasco
             #region Remove castling rights and reset king
             if (_pieceArray[move.To] == Definitions.K)
             {
-                if (Turn == Definitions.WHITE)
+                if (_turn == Definitions.WHITE)
                 {
                     // remove white's ability to castle
                     if ((_castling & 1) != 0)
@@ -1057,7 +1054,7 @@ namespace Fiasco
                         _zobristHash ^= _hashValues.CastlingRights[1];
                         _castling = _castling - 2;
                     }
-                    this.WhiteKing = move.To;
+                    _whiteKing = move.To;
                 }
                 else
                 {
@@ -1072,7 +1069,7 @@ namespace Fiasco
                         _zobristHash ^= _hashValues.CastlingRights[3];
                         _castling = _castling - 8;
                     }
-                    this.BlackKing = move.To;
+                    _blackKing = move.To;
                 }
             }
 
@@ -1100,15 +1097,15 @@ namespace Fiasco
             #endregion
 
             // Increment the full move number after black
-            if (Turn == Definitions.BLACK)
+            if (_turn == Definitions.BLACK)
                 _fullMoveNumber++;
 
             // Switch the active turn
-            Turn = -1 * Turn;
+            _turn = -1 * _turn;
             _zobristHash ^= _hashValues.IfBlackIsPlaying;
 
             // If the board is in check, subtract the move
-            if (IsInCheck(-1 * Turn))
+            if (IsInCheck(-1 * _turn))
             {
                 SubtractMove();
                 return false;
@@ -1124,10 +1121,10 @@ namespace Fiasco
             Square square = _history.Pop();
 
             // Switch the active turn
-            Turn = -1 * Turn;
+            _turn = -1 * _turn;
 
             // Decrement the full move number after black
-            if (Turn == Definitions.BLACK)
+            if (_turn == Definitions.BLACK)
                 _fullMoveNumber--;
 
             // Restore castling rights
@@ -1144,8 +1141,8 @@ namespace Fiasco
                 MovePiece(square.Move.To, square.Move.From);
 
                 // Add the piece back to the en passant target square
-                _pieceArray[square.EnPassantTarget - Turn * 10] = Definitions.P;
-                _colourArray[square.EnPassantTarget - Turn * 10] = -1 * Turn;
+                _pieceArray[square.EnPassantTarget - _turn * 10] = Definitions.P;
+                _colourArray[square.EnPassantTarget - _turn * 10] = -1 * _turn;
             }
             // CAPTURE
             else if ((square.Move.Bits & 1) != 0)
@@ -1216,9 +1213,9 @@ namespace Fiasco
             if (_pieceArray[square.Move.From] == Definitions.K)
             {
                 if (_colourArray[square.Move.From] == Definitions.WHITE)
-                    this.WhiteKing = square.Move.From;
+                    _whiteKing = square.Move.From;
                 else
-                    this.BlackKing = square.Move.From;
+                    _blackKing = square.Move.From;
             }
 
             return true;

@@ -44,6 +44,7 @@ namespace Fiasco.Tests
         {
             if (skipFen.Contains(fenBoard))
                 Assert.Fail("  FEN board failed at a lower level");
+			if(expected > 4000000) return;
             board.SetFen(fenBoard);
             ulong perft = Engine.Perft.Minimax(board, depth);
             if (expected != perft) skipFen.Add(fenBoard);

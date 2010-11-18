@@ -43,6 +43,7 @@ namespace Fiasco.Engine
 
         static public void Divide(Board board, int depth)
         {
+			DateTime start = DateTime.Now;
             Console.WriteLine("Divide() for depth " + depth);
             Console.WriteLine("--------------------");
             List<Move> moves = board.GenerateMoves(board.Turn);
@@ -53,11 +54,14 @@ namespace Fiasco.Engine
                 {
                     ulong current = Minimax(board, depth - 1);
                     total += current;
-                    Console.WriteLine(Definitions.MoveToString(move) + "\t" + current);
+                    Console.WriteLine("  " + Definitions.MoveToString(move) + "    " + current);
                     board.SubtractMove();
                 }
             }
-            Console.WriteLine("\nTotal: " + total);
+			DateTime end = DateTime.Now;
+			Console.WriteLine();
+            Console.WriteLine("Total:        " + total);
+            Console.WriteLine("Time Elapsed: " + (end - start).TotalSeconds + " s");
         }
     }
 }
