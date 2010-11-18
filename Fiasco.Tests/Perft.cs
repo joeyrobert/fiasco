@@ -53,7 +53,7 @@ namespace Fiasco.Tests
         public static List<object> PerftReader()
         {
             List<object> results = new List<object>();
-            string[] lines = System.IO.File.ReadAllLines("TestSuites/perftsuite.epd");
+            string[] lines = System.IO.File.ReadAllLines("../../../TestSuites/perftsuite.epd");
             foreach (string line in lines)
             {
                 string[] parts = line.Split(';');
